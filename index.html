@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>FTP Browser</title>
+        <link rel="icon" href="assets/img/favicon.png" type="image/png" />
+        <link rel="stylesheet" href="assets/css/materialize.min.css" type="text/css" />
+        <link rel="stylesheet" href="assets/css/style.css" type="text/css" />
+    </head>
+
+    <body>
+        <header class="navbar-fixed">
+            <nav class="purple darken-4">
+                <div class="nav-wrapper">
+                    <a class="brand-logo">FTP</a>
+                    <ul class="right hide-on-med-and-down">
+                        <li class="waves-effect"><a href="index.html"><i class="material-icons left">home</i>Home</a></li>
+                        <li class="waves-effect hide" id="disconnect-btn"><a href="javascript:void(0)"><i class="material-icons left">power_settings_new</i>Disconnect</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </header>
+
+        <main class="container">
+            <div id="ftp-form-container">
+                <form id="ftp-form">
+                    <div class="row">
+                        <div class="col s8 input-field">
+                            <input type="text" id="ftp-host" name="ftp-host" required>
+                            <label for="ftp-host">Host Name</label>
+                            <span class="helper-text"></span>
+                        </div>
+                        <div class="col s4 input-field">
+                            <input type="number" min="1" max="65535" id="ftp-port" name="ftp-port" value="21" required>
+                            <label for="ftp-port">Port Number</label>
+                            <span class="helper-text">Default port: 21</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col s4 input-field">
+                            <input type="text" id="ftp-username" name="ftp-username">
+                            <label for="ftp-username">Username</label>
+                            <span class="helper-text">Leave blank for none</span>
+                        </div>
+                        <div class="col s4 input-field">
+                            <input type="password" id="ftp-password" name="ftp-password">
+                            <label for="ftp-password">Password</label>
+                            <span class="helper-text">Leave blank for none</span>
+                        </div>
+                        <div class="col s4">
+                            <button type="submit" id="ftp-form-submit-btn" class="btn btn-large orange waves-effect waves-light"><i class="material-icons left">navigate_next</i>Connect</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="info-container">
+                <div class="row col s12 center-align" id="info-text">
+                    
+                </div>
+            </div>
+        </main>
+
+        <footer class="page-footer black">
+        </footer>
+    </body>
+
+    <script src="assets/js/jquery-3.4.1.min.js"></script>
+    <script src="assets/js/materialize.min.js"></script>
+    <script src="assets/js/main.js"></script>
+</html>
