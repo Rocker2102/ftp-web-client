@@ -86,7 +86,7 @@
         return $randomStr;
     }
 
-    function formObj($arr) {
+    function formArr($arr) {
         return $arr;
     }
 

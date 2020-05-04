@@ -37,22 +37,27 @@
         $details["password"] = "*";
 
         if ($ftp->login($data["ftp-username"], $data["ftp-password"])) {
-            $send->status = "Connected to ".$ip."@".$data["ftp-username"];
+            $send->status = "Connected to ".$ip.":".$port."@".$data["ftp-username"];
         } else {
             $send->status = "Unable to connect with given username & password!";
-            exitScript($send, 1, "Incorrect username or password!");
+            exitScript($send, 1, "Unable to connect to host at ".$ip.":".$port." with given credentials!");
         }
     } else if ($ftp->ftpStatus()) {
-        $send->status = "Connected to ".$ip."@anonymous";
+        $send->status = "Connected to ".$ip.":".$port."@anonymous";
     } else {
-        exitScript($send, 1, "Unable to connect to specified host (ftp://".$ip.":".$port.")");
+        exitScript($send, 1, "Unable to connect to host at ".$ip.":".$port);
     }
 
     $send->details = $details;
     $dir = ftp_rawlist($ftp->getConnectVar(), "/");
-    $send->dir = formObj($dir);
-    setSessionVar("FTP_Status", true);
-    setSessionVar("FTP_Host", $data["ftp-host"]);
-    setSessionVar("FTP_Port", $data["ftp-port"]);
-    exitScript($send, 0, "Connection established!");
+    $send->dir = formArr($dir);
+
+    if (is_array($dir) && count($dir) != 0) {
+        setSessionVar("FTP_Status", true);
+        setSessionVar("FTP_Host", $data["ftp-host"]);
+        setSessionVar("FTP_Port", $data["ftp-port"]);
+        exitScript($send, 0, "Connection established!");
+    } else {
+        exitScript($send, 1, "No directories found!");
+    }
 ?>

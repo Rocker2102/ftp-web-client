@@ -63,11 +63,23 @@ main {
     color: #fff !important;
     background-color: #ef5350 !important;
     border: 2px solid #000;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.danger-alert:hover {
+    background-color: #f44336 !important;
 }
 
 .success-alert {
     width: 100%;
     color: #fff !important;
-    background-color: #4caf50 !important;
+    background-color: #66bb6a !important;
     border: 2px solid #000;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.success-alert:hover {
+    background-color: #4caf50 !important;
 }
