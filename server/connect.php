@@ -49,10 +49,11 @@
     }
 
     $send->details = $details;
-    $dir = ftp_rawlist($ftp->getConnectVar(), "/");
-    $send->dir = formArr($dir);
+    $dirDetailed = ftp_rawlist($ftp->getConnectVar(), ".");
+    $dirParsed = ftp_nlist($ftp->getConnectVar(), ".");
 
-    if (is_array($dir) && count($dir) != 0) {
+    if (is_array($dirParsed) && count($dirParsed) != 0) {
+        $send->dir = formArr($dirDetailed, $dirParsed);
         setSessionVar("FTP_Status", true);
         setSessionVar("FTP_Host", $data["ftp-host"]);
         setSessionVar("FTP_Port", $data["ftp-port"]);

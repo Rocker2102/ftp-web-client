@@ -38,6 +38,17 @@
         unset($_SESSION[$index]);
     }
 
+    function removeEmptyAndReindex(array $data) {
+        $i = 0;
+        $newArr = [];
+        foreach ($data as $key => $value) {
+            if ($value == "0" || !empty($value) || strlen($value) != 0) {
+                array_push($newArr, $value);
+            }
+        }
+        return $newArr;
+    }
+
     function verifyData(array $data, array $requiredKeys = [], array $validKeys = []) {
         $newData = [];
 
@@ -86,7 +97,23 @@
         return $randomStr;
     }
 
-    function formArr($arr) {
+    function formArr(array $detailed, array $parsed) {
+        $arr = [];
+        $tmp = "";
+
+        for ($i = 0; $i < count($parsed); $i++) {
+            $obj = new stdClass;
+            $tmp = removeEmptyAndReindex(explode(" ", $detailed[$i]));
+            $obj->chmod = $tmp[0];
+            $obj->number = $tmp[1];
+            $obj->user = $tmp[2];
+            $obj->group = $tmp[3];
+            $obj->fsize = $tmp[4];
+            $obj->last_modified = $tmp[5]." ".$tmp[6]." ".$tmp[7];
+            $obj->name = $parsed[$i];
+            array_push($arr, $obj);
+        }
+
         return $arr;
     }
 
