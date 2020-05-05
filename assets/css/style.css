@@ -83,3 +83,21 @@ main {
 .success-alert:hover {
     background-color: #4caf50 !important;
 }
+
+.directory {
+    transition: all 0.3s ease;
+}
+
+.directory:hover {
+    background-color: #e0e0e0 !important;
+}
+
+.dir-name {
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.delete-icon {
+    color: red !important;
+    margin-left: 6px;
+}
