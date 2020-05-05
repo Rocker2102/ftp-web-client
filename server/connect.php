@@ -49,8 +49,11 @@
     }
 
     $send->details = $details;
-    $dirDetailed = ftp_rawlist($ftp->getConnectVar(), ".");
-    $dirParsed = ftp_nlist($ftp->getConnectVar(), ".");
+    $dirDetailed = ftp_rawlist($ftp->getConnectVar(), "");
+    $dirParsed = ftp_mlsd($ftp->getConnectVar(), "");
+
+    $send->detailed = $dirDetailed;
+    $send->parsed = $dirParsed;
 
     if (is_array($dirParsed) && count($dirParsed) != 0) {
         $send->dir = formArr($dirDetailed, $dirParsed);

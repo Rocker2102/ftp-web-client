@@ -101,20 +101,37 @@
         $arr = [];
         $tmp = "";
 
-        for ($i = 0; $i < count($parsed); $i++) {
+        $diffConstant = count($parsed) - count($detailed);
+
+        if ($diffConstant < 0) {
+            $begin = 2;
+        } else {
+            $begin = 0;
+        }
+
+        for ($i = $begin; $i < count($detailed); $i++) {
             $obj = new stdClass;
             $tmp = removeEmptyAndReindex(explode(" ", $detailed[$i]));
             $obj->chmod = $tmp[0];
             $obj->number = $tmp[1];
             $obj->user = $tmp[2];
             $obj->group = $tmp[3];
-            $obj->fsize = $tmp[4];
-            $obj->last_modified = $tmp[5]." ".$tmp[6]." ".$tmp[7];
-            $obj->name = $parsed[$i];
+            if (isset($parsed[$i + $diffConstant]["size"])) {
+                $obj->size = $parsed[$i + $diffConstant]["size"];
+            }
+            $obj->name = $parsed[$i + $diffConstant]["name"];
+            $obj->type = $parsed[$i + $diffConstant]["type"];
+            $obj->modified = formatDate($parsed[$i + $diffConstant]["modify"]);
             array_push($arr, $obj);
         }
 
         return $arr;
+    }
+
+    function formatDate($str) {
+        $date = mb_substr($str, 6, 2)."-".mb_substr($str, 4, 2)."-".mb_substr($str, 0, 4);
+        $time = mb_substr($str, 8, 2).":".mb_substr($str, 10, 2);
+        return $date." ".$time;
     }
 
     function exitScript($jsonObj, $errorVal = 1, $info = "Script error!") {

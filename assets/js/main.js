@@ -76,6 +76,7 @@ $("#ftp-form").on("submit", function(e) {
                 $("#disconnect-btn").removeClass("hide");
                 modDiv("info-text", data.status, "success-alert", "", "loader danger-alert info-alert warning-alert");
                 modDiv(submitBtn, "Connected", "green", "verified_user", "red green orange");
+                listDir(data.dir);
             } else {
                 $("#" + submitBtn).attr("disabled", false);
                 modDiv(submitBtn, "Connect", "orange", "navigate_next", "red green");
@@ -102,6 +103,7 @@ $("#disconnect-btn").click(function() {
     modDiv("info-text", "", "", "", "loader success-alert danger-alert info-alert warning-alert");
     modInputs("ftp-form", false);
     $("#ftp-form-container").removeClass("hide");
+    $("#collection-container").html("");
     disconnectFtp();
 });
 
@@ -122,4 +124,34 @@ $("#info-container").click(function() {
     } else {
         $("#ftp-form-container").toggleClass("hide");
     }
+});
+
+function listDir(arr) {
+    $("#collection-container").html("");
+    let ulContainer = "<ul class='collection'>";
+    let listItems = "";
+
+    for (i = 0; i < arr.length; i++) {
+        let attr = " data-dir='" + arr[i].name + "' data-type='" + arr[i].type + "' data-size='" + arr[i].size + "' ";
+        listItems += "<li class='collection-item avatar directory'>";
+            listItems += "<i class='material-icons circle'>folder</i>";
+            listItems += "<span class='title dir-name' " + attr + ">" + arr[i].name + "</span>";
+            listItems += "<p>Permissions: <b>" + arr[i].chmod + "</b>, &nbsp; Group: <b>" + arr[i].group + "</b>, &nbsp; User: <b>" + arr[i].user + "</b></p>";
+            if (arr[i].type == "file") {
+                listItems += "<p>Size: <b>" + arr[i].size + "</b> Bytes</p>";
+            }
+            listItems += "<p>Last Modified: <b>" + arr[i].modified + "</b></p>";
+            if (arr[i].type == "file") {
+                listItems += "<a class='secondary-content' href='#!'><i class='material-icons download-icon'>get_app</i><i class='material-icons delete-icon'>delete</i></a>";
+            }
+        listItems += "</li>";
+    }
+
+    ulContainer += listItems;
+    ulContainer += "</ul>";
+    $("#collection-container").append(ulContainer);
+}
+
+$("#collection-container").on("click", "ul > li > span.title", function() {
+    showToast("Clicked!");
 });
