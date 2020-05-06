@@ -92,6 +92,15 @@ main {
     background-color: #e0e0e0 !important;
 }
 
+.icon-list {
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.directory:hover .icon-list {
+    opacity: 1;
+}
+
 .dir-name {
     font-weight: 600;
     cursor: pointer;
