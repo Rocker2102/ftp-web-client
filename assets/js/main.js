@@ -173,8 +173,16 @@ function getIcon(name) {
     }
 }
 
-function formatSize() {
-
+function formatSize(bytes) {
+    if (bytes < 1000) {
+        return bytes + " Bytes";
+    } else if (bytes < 1000*1000) {
+        return bytes/1000 + " KB";
+    } else if (bytes < 1000*1000*1000) {
+        return bytes/(1000*1000) + " MB";
+    } else {
+        return bytes/(1000*1000*1000) + " GB";
+    }
 }
 
 function listDir(arr) {
