@@ -126,7 +126,7 @@ $("#info-container").click(function() {
     }
 });
 
-function getIcon(name) {
+function getIcon(name, type) {
     let tmp = name.split(".");
     tmp = tmp[tmp.length - 1];
     tmp = tmp.toLowerCase();
@@ -138,9 +138,18 @@ function getIcon(name) {
     let archive = ["zip", "zipx", "tar", "gz", "rar", "bz2", "bz", "wim", "xz", "7z", "iso", "img"];
     let code = ["c", "cs", "cpp", "h", "py", "jar", "jad", "java", "html", "php", "css", "js", "go", "dart"];
     let system = ["dll", "sys", "crt", "swp", "out", "drv", "ink", "dat", "efi", "ini"];
+    let systemFolder = ["$", "."];
 
     let icon = "";
     let image = "";
+
+    if (type == "dir") {
+        if (systemFolder.includes(name.substr(0, 1))) {
+            return "<i class='material-icons circle'>settings</i>";
+        } else {
+            return "<i class='material-icons circle'>folder_open</i>";
+        }
+    }
 
     if (tmp == "pdf") {
         icon = "picture_as_pdf";
@@ -191,9 +200,12 @@ function listDir(arr) {
     let listItems = "";
 
     for (i = 0; i < arr.length; i++) {
+        if (arr[i].chmod.substr(0, 1) == "d") {
+            arr[i].type == "dir";
+        }
         let attr = " data-dir='" + arr[i].name + "' data-type='" + arr[i].type + "' data-size='" + arr[i].size + "' ";
         listItems += "<li class='collection-item avatar directory'>";
-            listItems += getIcon(arr[i].name);
+            listItems += getIcon(arr[i].name, arr[i].type);
             listItems += "<span class='title dir-name' " + attr + ">" + arr[i].name + "</span>";
             listItems += "<p>Permissions: <b>" + arr[i].chmod + "</b>, &nbsp; Group: <b>" + arr[i].group + "</b>, &nbsp; User: <b>" + arr[i].user + "</b></p>";
             if (arr[i].type == "file") {
