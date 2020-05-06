@@ -53,7 +53,7 @@
         $newData = [];
 
         for ($i = 0; $i < count($requiredKeys); $i++) {
-            if (isset($data[$requiredKeys[$i]]) && !empty($data[$requiredKeys[$i]])) {
+            if (isset($data[$requiredKeys[$i]]) && (!empty($data[$requiredKeys[$i]]) || $data[$requiredKeys[$i]] == "0")) {
                 $newData[$requiredKeys[$i]] = $data[$requiredKeys[$i]];
             } else {
                 return false;
@@ -97,7 +97,7 @@
         return $randomStr;
     }
 
-    function formArr(array $detailed, array $parsed) {
+    function formArr(array $detailed, array $parsed, $cd = "") {
         $arr = [];
         $tmp = "";
 
@@ -116,12 +116,26 @@
             $obj->number = $tmp[1];
             $obj->user = $tmp[2];
             $obj->group = $tmp[3];
+            $obj->name = $parsed[$i + $diffConstant]["name"];
+
             if (isset($parsed[$i + $diffConstant]["size"])) {
                 $obj->size = $parsed[$i + $diffConstant]["size"];
+            } else {
+                $obj->size = "-";
             }
-            $obj->name = $parsed[$i + $diffConstant]["name"];
-            $obj->type = $parsed[$i + $diffConstant]["type"];
-            $obj->modified = formatDate($parsed[$i + $diffConstant]["modify"]);
+
+            if (isset($parsed[$i + $diffConstant]["type"])) {
+                $obj->type = $parsed[$i + $diffConstant]["type"];
+            } else {
+                $obj->type = "-";
+            }
+
+            if (isset($parsed[$i + $diffConstant]["modify"])) {
+                $obj->modified = formatDate($parsed[$i + $diffConstant]["modify"]);
+            } else {
+                $obj->modified = "-";
+            }
+
             array_push($arr, $obj);
         }
 

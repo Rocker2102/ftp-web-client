@@ -126,6 +126,57 @@ $("#info-container").click(function() {
     }
 });
 
+function getIcon(name) {
+    let tmp = name.split(".");
+    tmp = tmp[tmp.length - 1];
+    tmp = tmp.toLowerCase();
+
+    let img = ["jpg", "jpeg", "png", "bmp", "svg", "tiff", "raw", "psd", "ico"];
+    let vid = ["mp4", "mkv", "mpg", "mpeg", "mpeg4", "flv", "mov", "webm", "avi", "wmv"];
+    let doc = ["doc", "docx", "xls", "xlsx", "ppt", "pptx", "txt", "log", ""];
+    let audio = ["mp3", "ogg", "wav", "aac", "wma"];
+    let archive = ["zip", "zipx", "tar", "gz", "rar", "bz2", "bz", "wim", "xz", "7z", "iso", "img"];
+    let code = ["c", "cs", "cpp", "h", "py", "jar", "jad", "java", "html", "php", "css", "js", "go", "dart"];
+    let system = ["dll", "sys", "crt", "swp", "out", "drv", "ink", "dat", "efi", "ini"];
+
+    let icon = "";
+    let image = "";
+
+    if (tmp == "pdf") {
+        icon = "picture_as_pdf";
+    } else if (tmp == "vcf" || tmp == "vcard") {
+        icon = "contacts";
+    } else if (tmp == "apk") {
+        icon = "android";
+    } else if (img.includes(tmp)) {
+        icon = "landscape";
+    } else if (vid.includes(tmp)) {
+        icon = "movie";
+    } else if (doc.includes(tmp)) {
+        icon = "insert_drive_file";
+    } else if (audio.includes(tmp)) {
+        icon = "music_note";
+    } else if (archive.includes(tmp)) {
+        icon = "archive";
+    } else if (code.includes(tmp)) {
+        icon = "code";
+    } else if (system.includes(tmp)) {
+        img = "<img src='assets/img/icons/icon_systemFile.png' alt='icon' class='circle' />";
+    } else {
+        icon = "folder";
+    }
+
+    if (icon == "") {
+        return img;
+    } else {
+        return "<i class='material-icons circle'>" + icon + "</i>";
+    }
+}
+
+function formatSize() {
+
+}
+
 function listDir(arr) {
     $("#collection-container").html("");
     let ulContainer = "<ul class='collection'>";
@@ -134,15 +185,17 @@ function listDir(arr) {
     for (i = 0; i < arr.length; i++) {
         let attr = " data-dir='" + arr[i].name + "' data-type='" + arr[i].type + "' data-size='" + arr[i].size + "' ";
         listItems += "<li class='collection-item avatar directory'>";
-            listItems += "<i class='material-icons circle'>folder</i>";
+            listItems += getIcon(arr[i].name);
             listItems += "<span class='title dir-name' " + attr + ">" + arr[i].name + "</span>";
             listItems += "<p>Permissions: <b>" + arr[i].chmod + "</b>, &nbsp; Group: <b>" + arr[i].group + "</b>, &nbsp; User: <b>" + arr[i].user + "</b></p>";
             if (arr[i].type == "file") {
-                listItems += "<p>Size: <b>" + arr[i].size + "</b> Bytes</p>";
+                listItems += "<p>Size: <b>" + formatSize(arr[i].size) + "</b></p>";
             }
-            listItems += "<p>Last Modified: <b>" + arr[i].modified + "</b></p>";
-            if (arr[i].type == "file") {
-                listItems += "<a class='secondary-content' href='#!'><i class='material-icons download-icon'>get_app</i><i class='material-icons delete-icon'>delete</i></a>";
+            if (arr[i].modified != undefined) {
+                listItems += "<p>Last Modified: <b>" + arr[i].modified + "</b></p>";
+            }
+            if (arr[i].type != "dir") {
+                listItems += "<a class='secondary-content icon-list' href='#!'><i class='material-icons download-icon'>get_app</i><i class='material-icons delete-icon'>delete</i></a>";
             }
         listItems += "</li>";
     }
@@ -153,5 +206,39 @@ function listDir(arr) {
 }
 
 $("#collection-container").on("click", "ul > li > span.title", function() {
-    showToast("Clicked!");
+    let dir = $(this).attr("data-dir");
+    let type = $(this).attr("data-type");
+
+    if (type == "file") {
+        showToast("Selected object is a file!", "yellow black-text");
+        return;
+    }
+    
+    $.ajax({
+        url: "server/chdir.php",
+        type: "POST",
+        data: {dir: dir},
+        timeout: 90000,
+        beforeSend: function() {
+            showToast("Requesting...");
+        },
+        success: function(receive) {
+            var data;
+            try {
+                data = JSON.parse(receive);
+            } catch (e) {
+                showToast("Data Error!");
+                return;
+            }
+            
+            if (Number(data.error) == 0) {
+                listDir(data.dir);
+            } else {
+                showToast(data.info);
+            }
+        },
+        error: function() {
+            showToast("Request Error!");
+        }
+    });
 });
