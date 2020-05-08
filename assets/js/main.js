@@ -205,8 +205,8 @@ function listDir(arr) {
     let listItems = "";
 
     for (i = 0; i < arr.length; i++) {
-        if (arr[i].chmod.substr(0, 1) == "d") {
-            arr[i].type == "dir";
+        if (arr[i].chmod.substring(0, 1) == "d") {
+            arr[i].type = "dir";
         }
         let attr = " data-dir='" + arr[i].name + "' data-type='" + arr[i].type + "' data-size='" + arr[i].size + "' data-chdir='" + arr[i].chdir +  "' ";
         listItems += "<li class='collection-item avatar directory'>";
@@ -243,11 +243,15 @@ $("#collection-container").on("click", "ul > li > span.title", function() {
 });
 
 function modLocationContainer(list) {
+    if (list == undefined) {
+        return;
+    }
+
     let options = "";
     let extra = "";
 
     for (i = 0; i < list.length; i++) {
-        if (i == list.length - 1) {
+        if (i == list.length - 1 && list.length > 1) {
             extra = "selected disabled";
         } else {
             extra = "";
@@ -293,6 +297,10 @@ function dirChangeSuccess(receive) {
     }
     
     if (Number(data.error) == 0) {
+        if (data.info != undefined && data.info != "") {
+            showToast(data.info, "black white-text", "info");
+        }
+
         listDir(data.dir);
         modLocationContainer(data.list);
     } else {

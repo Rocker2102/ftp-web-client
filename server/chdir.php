@@ -57,16 +57,17 @@
             exitScript($send, 1, "Unable to change directory.!");
         }
 
+        $send->list = formList($ftp->getPwd());
+        setSessionVar("FTP_Cd", $ftp->getPwd());
+
         if (is_array($dirParsed) && count($dirParsed) > 1) {
             $send->dir = formArr($dirDetailed, $dirParsed, $ftp->getPwd());
-            $send->list = formList($ftp->getPwd());
-            setSessionVar("FTP_Cd", $ftp->getPwd());
             $send->pwd = getSessionVar("FTP_Cd");
-            exitScript($send, 0, "Connection established!");
+            exitScript($send, 0, "");
         } else {
             $send->status = "Connected. No directories/files to list!";
             $send->dir = [];
-            exitScript($send, 0, "No directories to list!");
+            exitScript($send, 0, "No directories/files to list!");
         }
     }
 ?>
