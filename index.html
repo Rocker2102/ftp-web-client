@@ -11,6 +11,12 @@
     </head>
 
     <body>
+        <div id="overlay"></div>
+
+        <div id="loader">
+            <div class='preloader-wrapper active'><div class='spinner-layer spinner-blue'><div class='circle-clipper left'><div class='circle'></div></div><div class='gap-patch'><div class='circle'></div></div><div class='circle-clipper right'><div class='circle'></div></div></div><div class='spinner-layer spinner-red'><div class='circle-clipper left'><div class='circle'></div></div><div class='gap-patch'><div class='circle'></div></div><div class='circle-clipper right'><div class='circle'></div></div></div><div class='spinner-layer spinner-yellow'><div class='circle-clipper left'><div class='circle'></div></div><div class='gap-patch'><div class='circle'></div></div><div class='circle-clipper right'><div class='circle'></div></div></div><div class='spinner-layer spinner-green'><div class='circle-clipper left'><div class='circle'></div></div><div class='gap-patch'><div class='circle'></div></div><div class='circle-clipper right'><div class='circle'></div></div></div></div>
+        </div>
+
         <header class="navbar-fixed">
             <nav class="purple darken-4">
                 <div class="nav-wrapper">
@@ -59,6 +65,15 @@
             <div class="info-container" id="info-container" connection-status="0">
                 <div class="row col s12 center-align" id="info-text">
                     
+                </div>
+            </div>
+
+            <div id="location-container" class="row">
+                <div class="col s4 input-field">
+                    <select>
+                        <option value="" disabled selected>/ Root</option>
+                    </select>
+                    <label>Directory List</label>
                 </div>
             </div>
 

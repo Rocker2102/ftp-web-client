@@ -110,3 +110,26 @@ main {
     color: red !important;
     margin-left: 6px;
 }
+
+#overlay {
+    display: none;
+    position: fixed !important;
+    height: 100% !important;
+    width: 100% !important;
+    background-color: rgba(0, 0, 0, 0.3) !important;
+    z-index: 999;
+}
+
+#loader {
+    display: none;
+    z-index: 9999;
+}
+
+#loader > div {
+    position: fixed !important;
+    margin: auto !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+}
