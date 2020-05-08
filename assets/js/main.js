@@ -77,6 +77,7 @@ $("#ftp-form").on("submit", function(e) {
                 modDiv("info-text", data.status, "success-alert", "", "loader danger-alert info-alert warning-alert");
                 modDiv(submitBtn, "Connected", "green", "verified_user", "red green orange");
                 listDir(data.dir);
+                modLocationContainer(data.list);
             } else {
                 $("#" + submitBtn).attr("disabled", false);
                 modDiv(submitBtn, "Connect", "orange", "navigate_next", "red green");
@@ -136,7 +137,7 @@ function getIcon(name, type) {
     let doc = ["doc", "docx", "xls", "xlsx", "ppt", "pptx", "txt", "log", ""];
     let audio = ["mp3", "ogg", "wav", "aac", "wma"];
     let archive = ["zip", "zipx", "tar", "gz", "rar", "bz2", "bz", "wim", "xz", "7z", "iso", "img"];
-    let code = ["c", "cs", "cpp", "h", "py", "jar", "jad", "java", "html", "php", "css", "js", "go", "dart"];
+    let code = ["c", "cs", "cpp", "h", "py", "jar", "jad", "java", "html", "php", "css", "js", "go", "dart", "bat"];
     let system = ["dll", "sys", "crt", "swp", "out", "drv", "ink", "dat", "efi", "ini"];
     let systemFolder = ["$", "."];
 
@@ -157,6 +158,8 @@ function getIcon(name, type) {
         icon = "contacts";
     } else if (tmp == "apk") {
         icon = "android";
+    } else if (tmp == "asc") {
+        icon = "https"
     } else if (img.includes(tmp)) {
         icon = "landscape";
     } else if (vid.includes(tmp)) {
@@ -172,7 +175,7 @@ function getIcon(name, type) {
     } else if (system.includes(tmp)) {
         img = "<img src='assets/img/icons/icon_systemFile.png' alt='icon' class='circle' />";
     } else {
-        icon = "folder";
+        icon = "help";
     }
 
     if (icon == "") {
@@ -203,7 +206,7 @@ function listDir(arr) {
         if (arr[i].chmod.substr(0, 1) == "d") {
             arr[i].type == "dir";
         }
-        let attr = " data-dir='" + arr[i].name + "' data-type='" + arr[i].type + "' data-size='" + arr[i].size + "' ";
+        let attr = " data-dir='" + arr[i].name + "' data-type='" + arr[i].type + "' data-size='" + arr[i].size + "' data-chdir='" + arr[i].chdir +  "' ";
         listItems += "<li class='collection-item avatar directory'>";
             listItems += getIcon(arr[i].name, arr[i].type);
             listItems += "<span class='title dir-name' " + attr + ">" + arr[i].name + "</span>";
@@ -226,7 +229,7 @@ function listDir(arr) {
 }
 
 $("#collection-container").on("click", "ul > li > span.title", function() {
-    let dir = $(this).attr("data-dir");
+    let dir = $(this).attr("data-chdir");
     let type = $(this).attr("data-type");
 
     if (type == "file") {
@@ -234,31 +237,71 @@ $("#collection-container").on("click", "ul > li > span.title", function() {
         return;
     }
     
+    changeDir(dir);
+});
+
+function modLocationContainer(list) {
+    let options = "";
+    let extra = "";
+
+    for (i = 0; i < list.length; i++) {
+        if (i == list.length - 1) {
+            extra = "selected disabled";
+        } else {
+            extra = "";
+        }
+        options += "<option value='" + list[i].chdir + "' " + extra + ">" + list[i].name + "</option>";
+    }
+
+    $("#location-container").find("select").html(options);
+    $("select").formSelect();
+}
+
+$("#location-container").find("select").on("change", function() {
+    let dir = $(this).val();
+    changeDir(dir);
+});
+
+function changeDir(dir) {
     $.ajax({
         url: "server/chdir.php",
         type: "POST",
-        data: {dir: dir},
+        data: {chdir: dir},
         timeout: 90000,
         beforeSend: function() {
-            showToast("Requesting...");
+            addOverlay();
         },
-        success: function(receive) {
-            var data;
-            try {
-                data = JSON.parse(receive);
-            } catch (e) {
-                showToast("Data Error!");
-                return;
-            }
-            
-            if (Number(data.error) == 0) {
-                listDir(data.dir);
-            } else {
-                showToast(data.info);
-            }
-        },
+        success: dirChangeSuccess,
         error: function() {
-            showToast("Request Error!");
+            removeOverlay();
+            showToast("Unable to change directory!");
         }
     });
-});
+}
+
+function dirChangeSuccess(receive) {
+    removeOverlay();
+
+    var data;
+    try {
+        data = JSON.parse(receive);
+    } catch (e) {
+        showToast("Data Error!");
+        return;
+    }
+    
+    if (Number(data.error) == 0) {
+        listDir(data.dir);
+        modLocationContainer(data.list);
+    } else {
+        showToast(data.info);
+    }
+}
+
+function addOverlay() {
+    $("#loader, #overlay").fadeIn();
+}
+
+function removeOverlay() {
+    $("#loader, #overlay").fadeOut();
+}
