@@ -71,11 +71,11 @@ $("#ftp-form").on("submit", function(e) {
             }
 
             if (Number(data.error) == 0) {
-                modInputs("ftp-form", true);
                 $("#info-container").attr("connection-status", "1");
-                $("#disconnect-btn").removeClass("hide");
+                $("#disconnect-btn, #location-container").removeClass("hide");
                 modDiv("info-text", data.status, "success-alert", "", "loader danger-alert info-alert warning-alert");
                 modDiv(submitBtn, "Connected", "green", "verified_user", "red green orange");
+                modInputs("ftp-form", true);
                 listDir(data.dir);
                 modLocationContainer(data.list);
             } else {
@@ -98,17 +98,19 @@ $("#ftp-form").on("submit", function(e) {
 
 $("#disconnect-btn").click(function() {
     $(this).addClass("hide");
+    disconnectFtp();
+});
+
+function disconnectFtp() {
+    $("#ftp-form-container").removeClass("hide");
+    $("#collection-container").html("");
+    $("#location-container").addClass("hide");
     $("#info-container").attr("connection-status", "0");
     $("#ftp-form-submit-btn").attr("disabled", false);
     modDiv("ftp-form-submit-btn", "Connect", "orange", "navigate_next", "red green");
     modDiv("info-text", "", "", "", "loader success-alert danger-alert info-alert warning-alert");
     modInputs("ftp-form", false);
-    $("#ftp-form-container").removeClass("hide");
-    $("#collection-container").html("");
-    disconnectFtp();
-});
 
-function disconnectFtp() {
     $.getJSON(
         "server/disconnect.php",
         function(data) {
