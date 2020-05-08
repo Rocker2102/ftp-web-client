@@ -97,7 +97,7 @@
         return $randomStr;
     }
 
-    function formArr(array $detailed, array $parsed, $cd = "") {
+    function formArr(array $detailed, array $parsed, $pwd = "") {
         $arr = [];
         $tmp = "";
 
@@ -117,6 +117,12 @@
             $obj->user = $tmp[2];
             $obj->group = $tmp[3];
             $obj->name = $parsed[$i + $diffConstant]["name"];
+
+            if ($pwd == "/" || $pwd == ".")  {
+                $obj->chdir = $obj->name;
+            } else {
+                $obj->chdir = $pwd."/".$obj->name;
+            }
 
             if (isset($parsed[$i + $diffConstant]["size"])) {
                 $obj->size = $parsed[$i + $diffConstant]["size"];
@@ -140,6 +146,33 @@
         }
 
         return $arr;
+    }
+
+    function getChdir($dir, $depth) {
+        $arr = explode("/", $dir);
+        $chdir = "";
+        
+        for ($i = 0; $i <= $depth; $i++) {
+            $chdir .= $arr[$i]."/";
+        }
+
+        return $chdir;
+    }
+
+    function formList($dir) {
+        $arr = explode("/", $dir);
+        $arr[0] = "/ Root";
+        $arr = removeEmptyAndReindex($arr);
+        $newArr = [];
+
+        for ($i = 0; $i < count($arr); $i++) {
+            $obj = new stdClass;
+            $obj->name = $arr[$i];
+            $obj->chdir = getChdir($dir, $i);
+            array_push($newArr, $obj);
+        }
+
+        return $newArr;
     }
 
     function formatDate($str) {

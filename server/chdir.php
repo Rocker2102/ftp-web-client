@@ -4,7 +4,7 @@
 
     require "operations.php";
 
-    $requiredKeys = ["dir"];
+    $requiredKeys = ["chdir"];
     $data = verifyData($_POST, $requiredKeys);
 
     if (!$data) {
@@ -12,14 +12,9 @@
     } else if (!getSessionVar("FTP_Status")) {
         exitScript($send, 1, "Invalid Session!");
     } else {
-        $pwd = getSessionVar("FTP_Cd");
-        if ($pwd == "/" || $pwd == ".")  {
-            $chdir = $data["dir"];
-        } else {
-            $chdir = $pwd."/".$data["dir"];
-        }
         $ip = getSessionVar("FTP_Host");
         $port = getSessionVar("FTP_Port");
+        $chdir = $data["chdir"];
 
         require "ftp_operations.php";
         $ftp = new ftp_operations($ip, $port);
@@ -55,16 +50,14 @@
             $dirParsed = $ftp->getMlsd();
             setSessionVar("FTP_Cd", $ftp->getPwd());
         } else if ($ftp->getLastModifiedTime($chdir)) {
-            exitScript($send, 1, "Selected object cannot be opened!");
+            exitScript($send, 1, "Selected object cannot be opened! ".$chdir);
         } else {
             exitScript($send, 1, "Unable to change directory to ".$chdir);
         }
 
-        $send->detailed = $dirDetailed;
-        $send->parsed = $dirParsed;
-
         if (is_array($dirParsed) && count($dirParsed) > 1) {
             $send->dir = formArr($dirDetailed, $dirParsed, $ftp->getPwd());
+            $send->list = formList($ftp->getPwd());
             setSessionVar("FTP_Cd", $ftp->getPwd());
             $send->pwd = getSessionVar("FTP_Cd");
             exitScript($send, 0, "Connection established!");

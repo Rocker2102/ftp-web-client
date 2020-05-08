@@ -67,15 +67,13 @@
         exitScript($send, 1, "Unable to change directory to '/'");
     }
 
-    $send->detailed = $dirDetailed;
-    $send->parsed = $dirParsed;
-
     setSessionVar("FTP_Status", true);
     setSessionVar("FTP_Host", $ip);
     setSessionVar("FTP_Port", $port);
 
     if (is_array($dirParsed) && count($dirParsed) > 1) {
-        $send->dir = formArr($dirDetailed, $dirParsed, $ftp->getPwd());
+        $send->dir = formArr($dirDetailed, $dirParsed);
+        $send->list = formList($ftp->getPwd());
         setSessionVar("FTP_Cd", $ftp->getPwd());
         $send->pwd = getSessionVar("FTP_Cd");
         exitScript($send, 0, "Connection established!");
