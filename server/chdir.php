@@ -45,14 +45,16 @@
             exitScript($send, 1, "Unable to connect to host at ".$ip.":".$port);
         }
 
+        $send->dirName = $chdir;
+
         if ($ftp->chdir($chdir)) {
             $dirDetailed = $ftp->getRawList();
             $dirParsed = $ftp->getMlsd();
             setSessionVar("FTP_Cd", $ftp->getPwd());
         } else if ($ftp->getLastModifiedTime($chdir)) {
-            exitScript($send, 1, "Selected object cannot be opened! ".$chdir);
+            exitScript($send, 1, "Selected object cannot be opened!");
         } else {
-            exitScript($send, 1, "Unable to change directory to ".$chdir);
+            exitScript($send, 1, "Unable to change directory.!");
         }
 
         if (is_array($dirParsed) && count($dirParsed) > 1) {
