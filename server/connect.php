@@ -72,11 +72,10 @@
     setSessionVar("FTP_Port", $port);
 
     $send->list = formList($ftp->getPwd());
-    setSessionVar("FTP_Cd", $ftp->getPwd());
+    $send->pwd = setSessionVar("FTP_Cd", $ftp->getPwd());
 
     if (is_array($dirParsed) && count($dirParsed) > 1) {
         $send->dir = formArr($dirDetailed, $dirParsed);
-        $send->pwd = getSessionVar("FTP_Cd");
         exitScript($send, 0, "Connection established!");
     } else {
         $send->status = "Connected. No directories to list!";

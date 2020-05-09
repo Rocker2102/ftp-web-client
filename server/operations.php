@@ -148,6 +148,18 @@
         return $arr;
     }
 
+    function getModDir($dir, int $stripEnd = 0) {
+        $arr = explode("/", $dir);
+        $arr = removeEmptyAndReindex($arr);
+        $new_dir = "";
+        
+        for ($i = 0; $i < count($arr) - $stripEnd; $i++) {
+            $new_dir .= "/".$arr[$i];
+        }
+
+        return $new_dir;
+    }
+
     function getChdir($dir, $depth) {
         $arr = explode("/", $dir);
         $chdir = "";
@@ -181,7 +193,7 @@
         return $date." ".$time;
     }
 
-    function exitScript($jsonObj, $errorVal = 1, $info = "Script error!") {
+    function exitScript(stdClass $jsonObj, $errorVal = 1, $info = "Script error!") {
         $jsonObj->error = $errorVal;
         $jsonObj->info = $info;
         echo json_encode($jsonObj);

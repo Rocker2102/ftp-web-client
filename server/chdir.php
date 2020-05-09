@@ -49,19 +49,17 @@
         if ($ftp->chdir($chdir)) {
             $dirDetailed = $ftp->getRawList();
             $dirParsed = $ftp->getMlsd();
-            setSessionVar("FTP_Cd", $ftp->getPwd());
         } else if ($ftp->getLastModifiedTime($chdir)) {
-            exitScript($send, 1, "Selected object cannot be opened!");
+            exitScript($send, 1, "Files cannot be opened!");
         } else {
             exitScript($send, 1, "Unable to change directory.!");
         }
 
         $send->list = formList($ftp->getPwd());
-        setSessionVar("FTP_Cd", $ftp->getPwd());
+        $send->pwd = setSessionVar("FTP_Cd", $ftp->getPwd());
 
         if (is_array($dirParsed) && count($dirParsed) > 1) {
             $send->dir = formArr($dirDetailed, $dirParsed, $ftp->getPwd());
-            $send->pwd = getSessionVar("FTP_Cd");
             exitScript($send, 0, "");
         } else {
             $send->status = "Connected. No directories/files to list!";
