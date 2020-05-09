@@ -1,6 +1,5 @@
 <?php
     $send = new stdClass;
-    $details = [];
 
     require "operations.php";
 
