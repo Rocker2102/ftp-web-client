@@ -77,7 +77,24 @@
             </div>
 
             <div id="collection-container">
-                
+            </div>
+
+            <div id="rename-modal" class="modal">
+                <div class="modal-content">
+                    <h4 id="rename-modal-heading">Rename {Field}</h4>
+                    <div class="my-gap-5"></div>
+                    <form id="rename-form">
+                        <div class="input-field">
+                            <input type="text" id="new-name" value="" required>
+                            <label for="new-name">Name</label>
+                            <span class="helper-text"></span>
+                        </div>
+                        <div class="row center-align">
+                            <button type="button" class="btn-flat white-text red modal-close waves-effect"><i class="material-icons left">close</i>Cancel</button>
+                            <button type="submit" id="rename-submit-btn" class="btn-flat white-text waves-effect green disabled"><i class="material-icons left">done</i>Rename</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </main>
 

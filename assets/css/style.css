@@ -144,3 +144,7 @@ main {
     right: 0 !important;
     bottom: 0 !important;
 }
+
+#rename-modal {
+    width: fit-content;
+}
