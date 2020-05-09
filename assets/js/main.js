@@ -1,5 +1,6 @@
 $(document).ready(function() {
     $('select').formSelect();
+    $('.modal').modal();
 });
 
 function showToast(htmlData, classData = "red white-text", icon = "info"){
@@ -238,7 +239,7 @@ $("#collection-container").on("click", "ul > li > span.title", function() {
     let type = $(this).parent().attr("data-type");
 
     if (type == "file") {
-        showToast("Selected object is a file!", "yellow black-text");
+        showToast("Files cannot be opened!", "yellow black-text");
         return;
     }
     
@@ -322,14 +323,89 @@ function removeOverlay() {
 $("#collection-container").on("click", "ul > li > a > i", function() {
     let operation = $(this).attr("data-op");
     let chdir = $(this).parent().parent().attr("data-chdir");
+    let type = $(this).parent().parent().attr("data-type");
+    let name = $(this).parent().parent().attr("data-dir");
 
     if (operation == "delete" && confirm("Are you sure?")) {
         showToast("Deleting...")
     } else if (operation == "download") {
         showToast("Downloading...");
     } else if (operation == "rename") {
-        showToast("Renaming..");
+        $("#rename-submit-btn").attr("disabled", true);
+        $("#new-name").val(name);
+        $("#new-name").attr({"old-val": name, "chdir": chdir});
+        $("#rename-modal-heading").html("Rename '" + name + "'");
+        M.updateTextFields();
+        $("#rename-modal").modal("open");
     } else {
         return;
     }
 });
+
+$("#rename-form").on("submit", function(e) {
+    e.preventDefault();
+    let newName = $("#new-name").val();
+    let chdir = $("#new-name").attr("chdir");
+    data = {"op": "rename", "new-name": newName, "dir": chdir};
+    $("#rename-submit-btn").attr("disabled", true);
+    fileMod(data, "rename-submit-btn");
+});
+
+$("#new-name").on("input", function() {
+    if ($(this).val() == $(this).attr("old-val") || $(this).val() == "") {
+        $("#rename-submit-btn").attr("disabled", true);
+    } else {
+        $("#rename-submit-btn").removeClass("disabled").attr("disabled", false);
+    }
+});
+
+function fileMod(sendData, submitBtn = "") {
+    $.ajax({
+        url: "server/files_op.php",
+        data: sendData,
+        type: "POST",
+        timeout: 90000,
+        beforeSend: function() {
+            if (sendData["op"] == "rename") {
+                $("#" + submitBtn).attr("disabled", true);
+                modDiv(submitBtn, "Renaming...", "disabled", "update");
+            }
+            addOverlay();
+        },
+        success: function(receive) {
+            if (sendData["op"] == "rename") {
+                $("#" + submitBtn).attr("disabled", false);
+                modDiv(submitBtn, "Rename", "", "done", "disabled");
+            }
+
+            removeOverlay();
+            var data;
+
+            try {
+                data = JSON.parse(receive);
+            } catch (e) {
+                showToast("Data Error!", "red white-text");
+                return;
+            }
+            $("#rename-modal").modal("close");
+
+            if (data.error == 0) {
+                showToast(data.info, "green white-text", "done_all");
+                if (sendData["op"] != "download") {
+                    listDir(data.dir);
+                    modLocationContainer(data.list);
+                }
+            } else {
+                showToast(data.info, "red white-text", "close");
+            }
+        },
+        error: function() {
+            if (sendData["op"] == "rename") {
+                $("#" + submitBtn).attr("disabled", true);
+                modDiv(submitBtn, "Rename", "", "done", "disabled");
+            }
+
+            removeOverlay();
+        }
+    });
+}
