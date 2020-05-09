@@ -69,6 +69,14 @@
             return @ftp_mdtm($this->connect, $file);
         }
 
+        public function rename($old, $new_name) {
+            if ($this->connect && @ftp_rename($this->connect, $old, $new_name)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
         function __destruct() {
             if ($this->connect) {
                 ftp_close($this->connect);
