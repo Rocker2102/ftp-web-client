@@ -8,6 +8,7 @@
         unsetSessionVar("FTP_Port");
         unsetSessionVar("FTP_Username");
         unsetSessionVar("FTP_Password");
+        unsetSessionVar("FTP_Cd");
         $send->status = 1;
         exitScript($send, 0, "Disconnected!");
     } else {
