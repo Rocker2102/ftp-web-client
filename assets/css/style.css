@@ -106,9 +106,20 @@ main {
     cursor: pointer;
 }
 
+.icon-list > i {
+    margin-left: 6px;
+}
+
+.rename-icon {
+    color: orange !important;
+}
+
 .delete-icon {
     color: red !important;
-    margin-left: 6px;
+}
+
+.download-icon {
+    color: green !important;
 }
 
 #overlay {

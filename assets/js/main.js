@@ -209,9 +209,9 @@ function listDir(arr) {
             arr[i].type = "dir";
         }
         let attr = " data-dir='" + arr[i].name + "' data-type='" + arr[i].type + "' data-size='" + arr[i].size + "' data-chdir='" + arr[i].chdir +  "' ";
-        listItems += "<li class='collection-item avatar directory'>";
+        listItems += "<li class='collection-item avatar directory' " + attr + ">";
             listItems += getIcon(arr[i].name, arr[i].type);
-            listItems += "<span class='title dir-name' " + attr + ">" + arr[i].name + "</span>";
+            listItems += "<span class='title dir-name'>" + arr[i].name + "</span>";
             listItems += "<p>Permissions: <b>" + arr[i].chmod + "</b>, &nbsp; Group: <b>" + arr[i].group + "</b>, &nbsp; User: <b>" + arr[i].user + "</b></p>";
             if (arr[i].type == "file") {
                 listItems += "<p>Size: <b>" + formatSize(arr[i].size) + "</b></p>";
@@ -219,9 +219,12 @@ function listDir(arr) {
             if (arr[i].modified != undefined) {
                 listItems += "<p>Last Modified: <b>" + arr[i].modified + "</b></p>";
             }
-            if (arr[i].type != "dir") {
-                listItems += "<a class='secondary-content icon-list' href='#!'><i class='material-icons download-icon'>get_app</i><i class='material-icons delete-icon'>delete</i></a>";
-            }
+
+            listItems += "<a class='secondary-content icon-list' href='#!'>";
+                listItems += "<i class='material-icons rename-icon' data-op='rename'>edit</i>";
+                listItems += "<i class='material-icons download-icon' data-op='download'>get_app</i>";
+                listItems += "<i class='material-icons delete-icon' data-op='delete'>delete</i>"
+            listItems += "</a>";
         listItems += "</li>";
     }
 
@@ -231,8 +234,8 @@ function listDir(arr) {
 }
 
 $("#collection-container").on("click", "ul > li > span.title", function() {
-    let dir = $(this).attr("data-chdir");
-    let type = $(this).attr("data-type");
+    let dir = $(this).parent().attr("data-chdir");
+    let type = $(this).parent().attr("data-type");
 
     if (type == "file") {
         showToast("Selected object is a file!", "yellow black-text");
@@ -315,3 +318,18 @@ function addOverlay() {
 function removeOverlay() {
     $("#loader, #overlay").fadeOut();
 }
+
+$("#collection-container").on("click", "ul > li > a > i", function() {
+    let operation = $(this).attr("data-op");
+    let chdir = $(this).parent().parent().attr("data-chdir");
+
+    if (operation == "delete" && confirm("Are you sure?")) {
+        showToast("Deleting...")
+    } else if (operation == "download") {
+        showToast("Downloading...");
+    } else if (operation == "rename") {
+        showToast("Renaming..");
+    } else {
+        return;
+    }
+});
