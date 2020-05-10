@@ -1,6 +1,8 @@
 $(document).ready(function() {
     $('select').formSelect();
     $('.modal').modal();
+    addOverlay();
+    checkSession();
 });
 
 function showToast(htmlData, classData = "red white-text", icon = "info"){
@@ -38,6 +40,32 @@ function customElement(tag, id = "", classList = "", attributeList = [], html = 
 function modInputs(id, status) {
     let elements = $("#" + id).find("input, select");
     $(elements).attr("disabled", status);
+}
+
+function checkSession() {
+    let submitBtn = "ftp-form-submit-btn";
+
+    $.getJSON(
+        "server/check_session.php",
+        function(data) {
+            removeOverlay();
+
+            if (data.error == 0) {
+                $("#" + submitBtn).attr("disabled", true);
+                $("#info-container").attr("connection-status", "1");
+                $("#disconnect-btn, #location-container").removeClass("hide");
+                modDiv("info-text", data.status, "success-alert", "", "loader danger-alert info-alert warning-alert");
+                modDiv(submitBtn, "Connected", "green", "verified_user", "red green orange");
+                modInputs("ftp-form", true);
+                listDir(data.dir);
+                modLocationContainer(data.list);
+            } else {
+                $("#" + submitBtn).attr("disabled", false);
+                modDiv(submitBtn, "Connect", "orange", "navigate_next", "red green");
+                modDiv("info-text", "", "", "", "loader success-alert danger-alert info-alert warning-alert");
+            }
+        }
+    )
 }
 
 $("#ftp-form").on("submit", function(e) {
