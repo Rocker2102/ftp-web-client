@@ -18,31 +18,7 @@
         require "ftp_operations.php";
         $ftp = new ftp_operations($ip, $port);
 
-        if ($username = getSessionVar("FTP_Username")) {
-            if (!getSessionVar("FTP_Password")) {
-                $password = "";
-            } else {
-                $password = getSessionVar("FTP_Password");
-            }
-    
-            if ($ftp->login($username, $password)) {
-                $send->status = "Connected to ".$ip.":".$port."@".$username;
-            } else {
-                $send->status = "Unable to connect with given username & password!";
-                exitScript($send, 1, "Unable to connect to host at ".$ip.":".$port." with given credentials!");
-            }
-        } else if ($ftp->login()) {
-            $send->status = "Connected to ".$ip.":".$port;
-        } else if ($ftp->login("anonymous")) {
-            $send->status = "Connected to ".$ip.":".$port."@anonymous";
-        } else {
-            $send->status = "Unable to connect to host at ".$ip.":".$port;
-            exitScript($send, 1, "Anonymous users are not allowed!");
-        }
-
-        if (!$ftp->ftpStatus()) {
-            exitScript($send, 1, "Unable to connect to host at ".$ip.":".$port);
-        }
+        sessionLogin($ftp, $send, $ip, $port);
 
         $send->dirName = $chdir;
 
