@@ -77,6 +77,14 @@
             }
         }
 
+        public function delete($dir) {
+            if ($this->connect && @ftp_delete($this->connect, $dir)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
         function __destruct() {
             if ($this->connect) {
                 ftp_close($this->connect);
