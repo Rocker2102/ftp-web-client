@@ -80,6 +80,8 @@
         public function delete($dir) {
             if ($this->connect && @ftp_delete($this->connect, $dir)) {
                 return true;
+            } else if ($this->connect && @ftp_rmdir($this->connect, $dir)) {
+                return true;
             } else {
                 return false;
             }

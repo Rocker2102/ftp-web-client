@@ -224,8 +224,7 @@
     function updateDirList($ftp, stdClass &$send, $dir) {
         if ($ftp->chdir($dir)) {
             $dirDetailed = $ftp->getRawList();
-            $dirParsed = $ftp->getMlsd();   
-            $send->list = formList($ftp->getPwd());
+            $dirParsed = $ftp->getMlsd();
             $send->pwd = $ftp->getPwd();
 
             if (is_array($dirParsed) && count($dirParsed) > 1) {

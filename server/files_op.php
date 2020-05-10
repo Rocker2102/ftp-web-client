@@ -55,10 +55,10 @@
             if ($ftp->delete($dir)) {
                 updateDirList($ftp, $send, $parentDir);
 
-                $send->status = "File/Directory at ".$dir." deleted successfully.";
-                exitScript($send, 0, "File Deleted!");
+                $send->status = "File/Directory at '".$dir."' deleted successfully.";
+                exitScript($send, 0, "File/Directory Deleted!");
             } else {
-                $send->status = "File/Directory at ".$dir." was not deleted! (If it is a directory, check if it is empty)";
+                $send->status = "File/Directory at '".$dir."' was not deleted! (If it is a directory, check if it is empty)";
                 exitScript($send, 1, "Unable to delete file/directory!");
             }
         }

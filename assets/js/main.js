@@ -203,15 +203,14 @@ function formatSize(bytes) {
 function listDir(arr) {
     if (arr == undefined) {
         return;
+    } else if (arr.length == 0) {
+        showToast("No files/directories to list!", "black white-text", "info");
+        return;
     }
 
     $("#collection-container").html("");
     let ulContainer = "<ul class='collection'>";
     let listItems = "";
-
-    if (arr.length == 0) {
-        showToast("No files/directories to list!", "black white-text", "info");
-    }
 
     for (i = 0; i < arr.length; i++) {
         if (arr[i].chmod.substring(0, 1) == "d") {
@@ -406,7 +405,6 @@ function fileMod(sendData, submitBtn = "") {
                 showToast(data.info, "green white-text", "done_all");
                 if (sendData["op"] != "download") {
                     listDir(data.dir);
-                    modLocationContainer(data.list);
                 }
             } else {
                 showToast(data.info, "red white-text", "close");
