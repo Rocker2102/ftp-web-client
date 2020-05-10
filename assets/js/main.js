@@ -201,6 +201,10 @@ function formatSize(bytes) {
 }
 
 function listDir(arr) {
+    if (arr == undefined) {
+        return;
+    }
+
     $("#collection-container").html("");
     let ulContainer = "<ul class='collection'>";
     let listItems = "";
@@ -327,7 +331,8 @@ $("#collection-container").on("click", "ul > li > a > i", function() {
     let name = $(this).parent().parent().attr("data-dir");
 
     if (operation == "delete" && confirm("Are you sure?")) {
-        showToast("Deleting...")
+        data = {"op": "delete", "dir": chdir};
+        fileMod(data);
     } else if (operation == "download") {
         showToast("Downloading...");
     } else if (operation == "rename") {
@@ -388,6 +393,10 @@ function fileMod(sendData, submitBtn = "") {
                 return;
             }
             $("#rename-modal").modal("close");
+
+            if (data.status != undefined) {
+                console.log(data.status);
+            }
 
             if (data.error == 0) {
                 showToast(data.info, "green white-text", "done_all");
