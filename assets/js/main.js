@@ -209,6 +209,10 @@ function listDir(arr) {
     let ulContainer = "<ul class='collection'>";
     let listItems = "";
 
+    if (arr.length == 0) {
+        showToast("No files/directories to list!", "black white-text", "info");
+    }
+
     for (i = 0; i < arr.length; i++) {
         if (arr[i].chmod.substring(0, 1) == "d") {
             arr[i].type = "dir";
