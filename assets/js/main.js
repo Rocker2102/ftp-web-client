@@ -204,19 +204,22 @@ function getIcon(name, type) {
     } else if (code.includes(tmp)) {
         icon = "code";
     } else if (system.includes(tmp)) {
-        img = "<img src='assets/img/icons/icon_systemFile.png' alt='icon' class='circle' />";
+        image = "<img src='assets/img/icons/icon_systemFile.png' alt='icon' class='circle' />";
     } else {
         icon = "help";
     }
 
     if (icon == "") {
-        return img;
+        return image;
     } else {
         return "<i class='material-icons circle'>" + icon + "</i>";
     }
 }
 
 function formatSize(bytes) {
+    if (isNaN(bytes)) {
+        return "-";
+    }
     if (bytes < 1000) {
         return bytes + " Bytes";
     } else if (bytes < 1000*1000) {
@@ -243,6 +246,8 @@ function listDir(arr) {
     for (i = 0; i < arr.length; i++) {
         if (arr[i].chmod.substring(0, 1) == "d") {
             arr[i].type = "dir";
+        } else {
+            arr[i].type = "file";
         }
         let attr = " data-dir='" + arr[i].name + "' data-type='" + arr[i].type + "' data-size='" + arr[i].size + "' data-chdir='" + arr[i].chdir +  "' ";
         listItems += "<li class='collection-item avatar directory' " + attr + ">";
@@ -365,7 +370,12 @@ $("#collection-container").on("click", "ul > li > a > i", function() {
         data = {"op": "delete", "dir": chdir};
         fileMod(data);
     } else if (operation == "download") {
-        showToast("Downloading...");
+        if (type == "file") {
+            data = {"op": "download", "dir": chdir};
+            fileMod(data);   
+        } else {
+            showToast("Only files can be downloaded!", "black white-text", "info");
+        }
     } else if (operation == "rename") {
         $("#rename-submit-btn").attr("disabled", true);
         $("#new-name").val(name);
@@ -433,6 +443,8 @@ function fileMod(sendData, submitBtn = "") {
                 showToast(data.info, "green white-text", "done_all");
                 if (sendData["op"] != "download") {
                     listDir(data.dir);
+                } else if (sendData["op"] == "download") {
+                    window.open(data.link, "_blank");
                 }
             } else {
                 showToast(data.info, "red white-text", "close");

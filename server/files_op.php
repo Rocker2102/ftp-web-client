@@ -41,7 +41,17 @@
             }
         }
     } else if ($op == "download") {
+        $requiredKeys = ["dir"];
+        $data = verifyData($_POST, $requiredKeys);
 
+        if (!$data) {
+            exitScript($send, 1, "Bad Request!");
+        } else {
+            $dir = $data["dir"];
+            $link = "ftp://".getSessionVar("FTP_Username").":".getSessionVar("FTP_Password")."@".$ip.":".$port.getModDir($dir);
+            $send->link = $link;
+            exitScript($send, 0, "Downloading...");
+        }
     } else if ($op == "delete") {
         $requiredKeys = ["dir"];
         $data = verifyData($_POST, $requiredKeys);
