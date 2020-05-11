@@ -7,6 +7,15 @@
          url(material-icons.ttf) format('truetype');
 }
 
+@font-face{
+    font-family: 'Open Sans Regular';
+    font-size: normal;
+    font-weight: 400;
+    src: local('Open Sans'),
+         local('OpenSans-Regular'),
+         url(OpenSans-Regular.ttf) format('truetype');
+}
+
 .material-icons {
     font-family: 'Material Icons';
     font-weight: normal;
@@ -30,9 +39,11 @@ body {
     display: flex;
     min-height: 100vh;
     flex-direction: column;
+    font-family: "Open Sans Regular" !important;
 }
 
 main {
+    font-family: "Open Sans Regular" !important;
     flex: 1 0 auto;
 }
 
