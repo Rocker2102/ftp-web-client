@@ -171,6 +171,7 @@ function getIcon(name, type) {
     let code = ["c", "cs", "cpp", "h", "py", "jar", "jad", "java", "html", "php", "css", "js", "go", "dart", "bat"];
     let system = ["dll", "sys", "crt", "swp", "out", "drv", "ink", "dat", "efi", "ini"];
     let systemFolder = ["$", "."];
+    let hidden = [".", "$", "@", "_"];
 
     let icon = "";
     let image = "";
@@ -183,7 +184,9 @@ function getIcon(name, type) {
         }
     }
 
-    if (tmp == "pdf") {
+    if (hidden.includes(name.substr(0, 1))) {
+        icon =  "visibility_off";
+    } else if (tmp == "pdf") {
         icon = "picture_as_pdf";
     } else if (tmp == "vcf" || tmp == "vcard") {
         icon = "contacts";
@@ -236,7 +239,6 @@ function listDir(arr) {
         return;
     } else if (arr.length == 0) {
         showToast("No files/directories to list!", "black white-text", "info");
-        return;
     }
 
     $("#collection-container").html("");
