@@ -1,9 +1,15 @@
 $(document).ready(function() {
-    $('select').formSelect();
-    $('.modal').modal();
+    $("select").formSelect();
+    $(".modal").modal();
+    $(".fixed-action-btn").floatingActionButton();
+    $(".tooltipped").tooltip({exitDelay: 300});
     addOverlay();
     checkSession();
 });
+
+/* global variables */
+let pwd = "";
+let cached = [];
 
 function showToast(htmlData, classData = "red white-text", icon = "info"){
     let toastIcon = "<i class='material-icons left'>" + icon + "</i>";
@@ -42,6 +48,12 @@ function modInputs(id, status) {
     $(elements).attr("disabled", status);
 }
 
+$("#op-fab").hover(function() {
+
+}, function() {
+
+});
+
 function checkSession() {
     let submitBtn = "ftp-form-submit-btn";
 
@@ -51,6 +63,7 @@ function checkSession() {
             removeOverlay();
 
             if (data.error == 0) {
+                $("#op-fab").parent().removeClass("scale-out").addClass("scale-in");
                 $("#" + submitBtn).attr("disabled", true);
                 $("#info-container").attr("connection-status", "1");
                 $("#disconnect-btn, #location-container").removeClass("hide");
@@ -58,7 +71,7 @@ function checkSession() {
                 modDiv(submitBtn, "Connected", "green", "verified_user", "red green orange");
                 modInputs("ftp-form", true);
                 listDir(data.dir);
-                modLocationContainer(data.list);
+                modLocationContainer(data.list, data.pwd);
             } else {
                 $("#" + submitBtn).attr("disabled", false);
                 modDiv(submitBtn, "Connect", "orange", "navigate_next", "red green");
@@ -100,13 +113,14 @@ $("#ftp-form").on("submit", function(e) {
             }
 
             if (Number(data.error) == 0) {
+                $("#op-fab").parent().removeClass("scale-out").addClass("scale-in");
                 $("#info-container").attr("connection-status", "1");
                 $("#disconnect-btn, #location-container").removeClass("hide");
                 modDiv("info-text", data.status, "success-alert", "", "loader danger-alert info-alert warning-alert");
                 modDiv(submitBtn, "Connected", "green", "verified_user", "red green orange");
                 modInputs("ftp-form", true);
                 listDir(data.dir);
-                modLocationContainer(data.list);
+                modLocationContainer(data.list, data.pwd);
             } else {
                 $("#" + submitBtn).attr("disabled", false);
                 modDiv(submitBtn, "Connect", "orange", "navigate_next", "red green");
@@ -131,6 +145,7 @@ $("#disconnect-btn").click(function() {
 });
 
 function disconnectFtp() {
+    $("#op-fab").parent().removeClass("scale-in").addClass("scale-out");
     $("#ftp-form-container").removeClass("hide");
     $("#collection-container").html("");
     $("#location-container").addClass("hide");
@@ -288,7 +303,9 @@ $("#collection-container").on("click", "ul > li > span.title", function() {
     changeDir(dir);
 });
 
-function modLocationContainer(list) {
+function modLocationContainer(list, cd) {
+    pwd = cd;
+
     if (list == undefined) {
         return;
     }
@@ -348,7 +365,7 @@ function dirChangeSuccess(receive) {
         }
 
         listDir(data.dir);
-        modLocationContainer(data.list);
+        modLocationContainer(data.list, data.pwd);
     } else {
         showToast(data.info);
     }
@@ -408,22 +425,24 @@ $("#new-name").on("input", function() {
 });
 
 function fileMod(sendData, submitBtn = "") {
+    let modalOp = ["rename", "new-folder", "new-file"];
+
     $.ajax({
         url: "server/files_op.php",
         data: sendData,
         type: "POST",
         timeout: 90000,
         beforeSend: function() {
-            if (sendData["op"] == "rename") {
+            if (modalOp.includes(sendData["op"])) {
                 $("#" + submitBtn).attr("disabled", true);
-                modDiv(submitBtn, "Renaming...", "disabled", "update");
+                modDiv(submitBtn, "Loading...", "disabled", "update");
             }
             addOverlay();
         },
         success: function(receive) {
-            if (sendData["op"] == "rename") {
+            if (modalOp.includes(sendData["op"])) {
                 $("#" + submitBtn).attr("disabled", false);
-                modDiv(submitBtn, "Rename", "", "done", "disabled");
+                modDiv(submitBtn, "Confirm", "", "done", "disabled");
             }
 
             removeOverlay();
@@ -435,7 +454,7 @@ function fileMod(sendData, submitBtn = "") {
                 showToast("Data Error!", "red white-text");
                 return;
             }
-            $("#rename-modal").modal("close");
+            $("#rename-modal, #new-folder-modal").modal("close");
 
             if (data.status != undefined) {
                 console.log(data.status);
@@ -443,10 +462,10 @@ function fileMod(sendData, submitBtn = "") {
 
             if (data.error == 0) {
                 showToast(data.info, "green white-text", "done_all");
-                if (sendData["op"] != "download") {
-                    listDir(data.dir);
-                } else if (sendData["op"] == "download") {
+                if (sendData["op"] == "download") {
                     window.open(data.link, "_blank");
+                } else {
+                    listDir(data.dir);
                 }
             } else {
                 showToast(data.info, "red white-text", "close");
@@ -462,3 +481,47 @@ function fileMod(sendData, submitBtn = "") {
         }
     });
 }
+
+$(".dir-op").click(function() {
+    let op = $(this).attr("data-op");
+
+    if (op == "upload-file") {
+        showToast("Under Development", "yellow black-text", "gavel");
+    } else if (op == "new-folder") {
+        $("#new-folder-location").html("Location: " + pwd);
+        $("#new-folder-modal").modal("open");
+    } else if (op == "new-file") {
+        showToast("Under Development", "yellow black-text", "gavel");
+    } else {
+        return;
+    }
+});
+
+$("#new-folder").on("input", function() {
+    let badChars = ["/", "\\", "\"", "<", ">", "?", "*", "|", ":"];
+    let val = $(this).val();
+
+    for (i = 0; i < badChars.length; i++) {
+        if (val.includes(badChars[i])) {
+            showToast("Folder/File name cannot contain '" + badChars[i] + "'", "yellow black-text");
+            if (badChars[i] == "?") {
+                val = val.replace(/\?/g, "");
+            } else {
+                regEx = new RegExp(badChars[i], "g");
+                val = val.replace(regEx, "");
+            }
+        }
+    }
+
+    $("#new-folder-modal-heading").html("Create Folder: " + val);
+    $(this).val(val);
+});
+
+$("#new-folder-form").on("submit", function(e) {
+    e.preventDefault();
+    let name = $("#new-folder").val();
+    let dir = pwd;
+    data = {"op": "new-folder", "name": name, "dir": dir};
+    $("#new-folder-submit-btn").attr("disabled", true);
+    fileMod(data, "new-folder-submit-btn");
+});
