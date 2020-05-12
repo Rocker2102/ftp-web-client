@@ -26,7 +26,7 @@
             $dirDetailed = $ftp->getRawList();
             $dirParsed = $ftp->getMlsd();
         } else if ($ftp->getLastModifiedTime($chdir)) {
-            exitScript($send, 1, "Files cannot be opened!");
+            exitScript($send, 1, "File/Folder cannot be opened!");
         } else {
             exitScript($send, 1, "Unable to change directory.!");
         }
