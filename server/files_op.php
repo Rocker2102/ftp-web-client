@@ -36,7 +36,7 @@
                 $send->status = "[SUCCESS] File/Directory (".$dir.") renamed successfully.";
                 exitScript($send, 0, "Renamed!");
             } else {
-                $send->status = "[SFAIL] File/Directory (".$dir.") not renamed!";
+                $send->status = "[FAIL] File/Directory (".$dir.") not renamed!";
                 exitScript($send, 1, "Unable to rename specified file/directory!");
             }
         }
