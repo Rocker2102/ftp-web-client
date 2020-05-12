@@ -48,7 +48,17 @@
             exitScript($send, 1, "Bad Request!");
         } else {
             $dir = $data["dir"];
-            $link = "ftp://".getSessionVar("FTP_Username").":".getSessionVar("FTP_Password")."@".$ip.":".$port.getModDir($dir);
+            $username = getSessionVar("FTP_Username");
+            $password = getSessionVar("FTP_Password");
+
+            if ($username && $password) {
+                $link = "ftp://".$username.":".$password."@".$ip.":".$port.getModDir($dir);
+            } else if ($username) {
+                $link = "ftp://".$username."@".$ip.":".$port.getModDir($dir);
+            } else {
+                $link = "ftp://".$ip.":".$port.getModDir($dir);
+            }
+
             $send->link = $link;
             exitScript($send, 0, "Downloading...");
         }
