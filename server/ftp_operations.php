@@ -87,6 +87,14 @@
             }
         }
 
+        public function makeDir($location) {
+            if ($this->connect && ftp_mkdir($this->connect, $location)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
         function __destruct() {
             if ($this->connect) {
                 ftp_close($this->connect);
