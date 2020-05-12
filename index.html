@@ -91,10 +91,40 @@
                         </div>
                         <div class="row center-align">
                             <button type="button" class="btn-flat white-text red modal-close waves-effect"><i class="material-icons left">close</i>Cancel</button>
-                            <button type="submit" id="rename-submit-btn" class="btn-flat white-text waves-effect green disabled"><i class="material-icons left">done</i>Rename</button>
+                            <button type="submit" id="rename-submit-btn" class="btn-flat white-text waves-effect green disabled"><i class="material-icons left">done</i>Confirm</button>
                         </div>
                     </form>
                 </div>
+            </div>
+
+            <div id="new-folder-modal" class="modal">
+                <div class="modal-content">
+                    <h4 id="new-folder-modal-heading">Create Folder</h4>
+                    <p id="new-folder-location"></p>
+                    <div class="my-gap-5"></div>
+                    <form id="new-folder-form">
+                        <div class="input-field">
+                            <input type="text" id="new-folder" value="" required>
+                            <label for="new-folder">Folder Name</label>
+                            <span class="helper-text">Name of the folder should be different from existing folders.</span>
+                        </div>
+                        <div class="row center-align">
+                            <button type="button" class="btn-flat white-text red modal-close waves-effect"><i class="material-icons left">close</i>Cancel</button>
+                            <button type="submit" id="new-folder-submit-btn" class="btn-flat white-text waves-effect green"><i class="material-icons left">done</i>Confirm</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="fixed-action-btn scale-transition scale-out">
+                <a class="btn-floating btn-large red" id="op-fab">
+                    <i class="large material-icons">add</i>
+                </a>
+                <ul>
+                    <li><a class="btn-floating green tooltipped dir-op" data-op="upload-file" data-position="left" data-tooltip="Upload file"><i class="material-icons">publish</i></a></li>
+                    <li><a class="btn-floating blue tooltipped dir-op" data-op="new-folder" data-position="left" data-tooltip="New folder"><i class="material-icons">add</i></a></li>
+                    <li><a class="btn-floating yellow darken-2 tooltipped dir-op" data-op="new-file" data-position="left" data-tooltip="New file"><i class="material-icons">create</i></a></li>
+                </ul>
             </div>
         </main>
 

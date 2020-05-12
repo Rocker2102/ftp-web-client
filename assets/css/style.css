@@ -138,7 +138,7 @@ main {
     position: fixed !important;
     height: 100% !important;
     width: 100% !important;
-    background-color: rgba(0, 0, 0, 0.3) !important;
+    background-color: rgba(0, 0, 0, 0.4) !important;
     z-index: 999;
 }
 
@@ -147,7 +147,7 @@ main {
     z-index: 9999;
 }
 
-#loader > div {
+#loader > div.preloader-wrapper {
     position: fixed !important;
     margin: auto !important;
     top: 0 !important;
@@ -158,4 +158,21 @@ main {
 
 #rename-modal {
     width: fit-content;
+}
+
+#new-folder-modal {
+    width: fit-content;
+}
+
+#op-fab > i {
+    transform: rotate(0deg);
+    transition: transform 0.4s ease;
+}
+
+#op-fab:hover i {
+    transform: rotate(45deg);
+}
+
+footer {
+    margin-top: 20px;
 }
