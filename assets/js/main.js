@@ -504,12 +504,8 @@ $("#new-folder").on("input", function() {
     for (i = 0; i < badChars.length; i++) {
         if (val.includes(badChars[i])) {
             showToast("Folder/File name cannot contain '" + badChars[i] + "'", "yellow black-text");
-            if (badChars[i] == "?") {
-                val = val.replace(/\?/g, "");
-            } else {
-                regEx = new RegExp(badChars[i], "g");
-                val = val.replace(regEx, "");
-            }
+            regEx = new RegExp("\\" + badChars[i], "g");
+            val = val.replace(regEx, "");
         }
     }
 
