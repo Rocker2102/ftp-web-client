@@ -35,6 +35,10 @@
     -webkit-font-feature-settings: 'liga';
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     display: flex;
     min-height: 100vh;
