@@ -88,7 +88,7 @@
         }
 
         public function makeDir($location) {
-            if ($this->connect && ftp_mkdir($this->connect, $location)) {
+            if ($this->connect && @ftp_mkdir($this->connect, $location)) {
                 return true;
             } else {
                 return false;
