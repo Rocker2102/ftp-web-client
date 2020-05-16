@@ -308,7 +308,14 @@ function modLocationContainer(list, cd) {
 
     if (list == undefined) {
         return;
+    } else if (list.length == 1) {
+        $("#ftp-back-btn, #ftp-home-btn").attr("disabled", true);
+    } else {
+        $("#ftp-back-btn").attr({"disabled": false, "chdir": list[list.length - 2].chdir});
+        $("#ftp-home-btn").attr("disabled", false);
     }
+
+    $("#ftp-refresh-btn").attr("chdir", list[list.length - 1].chdir);
 
     let options = "";
     let extra = "";
@@ -520,4 +527,9 @@ $("#new-folder-form").on("submit", function(e) {
     data = {"op": "new-folder", "name": name, "dir": dir};
     $("#new-folder-submit-btn").attr("disabled", true);
     fileMod(data, "new-folder-submit-btn");
+});
+
+$(".ftp-nav-btn ").on("click", function() {
+    let dir = $(this).attr("chdir");
+    changeDir(dir);
 });
