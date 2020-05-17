@@ -9,7 +9,7 @@ $(document).ready(function() {
 
 /* global variables */
 let pwd = "";
-let cached = [];
+let cached = {};
 
 function showToast(htmlData, classData = "red white-text", icon = "info"){
     let toastIcon = "<i class='material-icons left'>" + icon + "</i>";
@@ -70,8 +70,7 @@ function checkSession() {
                 modDiv("info-text", data.status, "success-alert", "", "loader danger-alert info-alert warning-alert");
                 modDiv(submitBtn, "Connected", "green", "verified_user", "red green orange");
                 modInputs("ftp-form", true);
-                listDir(data.dir);
-                modLocationContainer(data.list, data.pwd);
+                modLocationContainer(data.list, data.pwd, data.dir);
             } else {
                 $("#" + submitBtn).attr("disabled", false);
                 modDiv(submitBtn, "Connect", "orange", "navigate_next", "red green");
@@ -119,8 +118,7 @@ $("#ftp-form").on("submit", function(e) {
                 modDiv("info-text", data.status, "success-alert", "", "loader danger-alert info-alert warning-alert");
                 modDiv(submitBtn, "Connected", "green", "verified_user", "red green orange");
                 modInputs("ftp-form", true);
-                listDir(data.dir);
-                modLocationContainer(data.list, data.pwd);
+                modLocationContainer(data.list, data.pwd, data.dir);
             } else {
                 $("#" + submitBtn).attr("disabled", false);
                 modDiv(submitBtn, "Connect", "orange", "navigate_next", "red green");
@@ -303,8 +301,9 @@ $("#collection-container").on("click", "ul > li > span.title", function() {
     changeDir(dir);
 });
 
-function modLocationContainer(list, cd) {
+function modLocationContainer(list, cd, dir) {
     pwd = cd;
+    listDir(dir);
 
     if (list == undefined) {
         return;
@@ -317,8 +316,13 @@ function modLocationContainer(list, cd) {
 
     $("#ftp-refresh-btn").attr("chdir", list[list.length - 1].chdir);
 
+    let dirName = list[list.length - 1].name;
     let options = "";
     let extra = "";
+
+    if (getCacheStatus() == "1") {
+        cached[dirName] = {"dir": dir, "list": list, "cd": cd};
+    }
 
     for (i = 0; i < list.length; i++) {
         if (i == list.length - 1 && list.length > 1) {
@@ -338,7 +342,22 @@ $("#location-container").find("select").on("change", function() {
     changeDir(dir);
 });
 
-function changeDir(dir) {
+function changeDir(dir, refresh = 0) {
+    let tmp = dir.split("/");
+    let dirName = "";
+
+    if (tmp[tmp.length - 1] == "" && tmp.length > 2) {
+        dirName = tmp[tmp.length - 2];
+    } else {
+        dirName = tmp[tmp.length - 1];
+    }
+
+    if (getCacheStatus() == "1" && cached[dirName] != undefined && refresh == 0) {
+        modLocationContainer(cached[dirName]["list"], cached[dirName]["cd"], cached[dirName]["dir"]);
+        console.log("[CACHE] Loaded local copy of " + dirName);
+        return;
+    }
+
     $.ajax({
         url: "server/chdir.php",
         type: "POST",
@@ -371,8 +390,7 @@ function dirChangeSuccess(receive) {
             showToast(data.info, "black white-text", "info");
         }
 
-        listDir(data.dir);
-        modLocationContainer(data.list, data.pwd);
+        modLocationContainer(data.list, data.pwd, data.dir);
     } else {
         showToast(data.info);
     }
@@ -529,7 +547,26 @@ $("#new-folder-form").on("submit", function(e) {
     fileMod(data, "new-folder-submit-btn");
 });
 
-$(".ftp-nav-btn ").on("click", function() {
+$(".ftp-nav-btn").on("click", function() {
     let dir = $(this).attr("chdir");
-    changeDir(dir);
+
+    if ($(this).attr("id") == "ftp-refresh-btn") {
+        changeDir(dir, 1);
+    } else {
+        changeDir(dir);
+    }
 });
+
+$("#ftp-cache-btn").on("click", function() {
+    if (getCacheStatus() == "1") {
+        $(this).removeClass("green").addClass("red");
+        $(this).attr({"cache-status": "0", "data-tooltip": "Caching disabled!"});
+    } else {
+        $(this).removeClass("red").addClass("green");
+        $(this).attr({"cache-status": "1", "data-tooltip": "Caching enabled"});
+    }
+});
+
+function getCacheStatus() {
+    return $("#ftp-cache-btn").attr("cache-status");
+}
