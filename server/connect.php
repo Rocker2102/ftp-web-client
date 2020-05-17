@@ -11,8 +11,6 @@
 
     if (!$data) {
         exitScript($send, 1, "Bad Request!");
-    } else if (getSessionVar("FTP_Status")) {
-        exitScript($send, 1, "Disconnect from previous session first!");
     }
 
     $ip = gethostbyname($data["ftp-host"]);
