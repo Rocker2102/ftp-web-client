@@ -76,8 +76,10 @@
                 </div>
                 <div id="secondary-nav" class="col m8 s12 center-align">
                     <button id="ftp-back-btn" class="ftp-nav-btn btn waves-effect orange darken-1 tooltipped" data-tooltip="Back" data-position="bottom" disabled><i class="material-icons">keyboard_arrow_left</i></button>
-                    <button id="ftp-home-btn" class="ftp-nav-btn btn waves-effect red darken-1 tooltipped" chdir="/" data-tooltip="Home" data-position="bottom"><i class="material-icons">home</i></button>
+                    <button id="ftp-home-btn" class="ftp-nav-btn btn waves-effect purple darken-1 tooltipped" chdir="/" data-tooltip="Home" data-position="top"><i class="material-icons">home</i></button>
                     <button id="ftp-refresh-btn" class="ftp-nav-btn btn waves-effect blue tooltipped" data-tooltip="Refresh with server" data-position="bottom"><i class="material-icons">refresh</i></button>
+                    <button id="ftp-cache-btn" cache-status="0" class="btn waves-effect red tooltipped" data-tooltip="Caching disabled!" data-position="top"><i class="material-icons">cached</i></button>
+                    <button class="btn waves-effect tooltipped modal-trigger" data-target="listing-options-modal" data-tooltip="Listing options" data-position="bottom"><i class="material-icons">more_vert</i></button>
                 </div>
             </div>
 
@@ -129,7 +131,7 @@
                     <li><a class="btn-floating green tooltipped dir-op" data-op="upload-file" data-position="left" data-tooltip="Upload file"><i class="material-icons">publish</i></a></li>
                     <li><a class="btn-floating blue tooltipped dir-op" data-op="new-folder" data-position="left" data-tooltip="New folder"><i class="material-icons">add</i></a></li>
                     <li><a class="btn-floating yellow darken-2 tooltipped dir-op" data-op="new-file" data-position="left" data-tooltip="New file"><i class="material-icons">create</i></a></li>
-                    <li><a href="#" class="btn-floating black whitte-text tooltipped" data-position="left" data-tooltip="Back to top"><i class="material-icons">keyboard_arrow_up</i></a></li>
+                    <li><a href="#" class="btn-floating black white-text tooltipped" data-position="left" data-tooltip="Back to top"><i class="material-icons">keyboard_arrow_up</i></a></li>
                 </ul>
             </div>
         </main>
