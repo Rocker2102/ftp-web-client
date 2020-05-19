@@ -316,11 +316,12 @@ function modLocationContainer(list, cd, dir) {
 
     $("#ftp-refresh-btn").attr("chdir", list[list.length - 1].chdir);
 
-    let dirName = list[list.length - 1].name;
+    let dirName = list[list.length - 1].chdir;
     let options = "";
     let extra = "";
 
     if (getCacheStatus() == "1") {
+        dirName = dirName.replace(/\//g, "");
         cached[dirName] = {"dir": dir, "list": list, "cd": cd};
     }
 
@@ -343,14 +344,7 @@ $("#location-container").find("select").on("change", function() {
 });
 
 function changeDir(dir, refresh = 0) {
-    let tmp = dir.split("/");
-    let dirName = "";
-
-    if (tmp[tmp.length - 1] == "" && tmp.length > 2) {
-        dirName = tmp[tmp.length - 2];
-    } else {
-        dirName = tmp[tmp.length - 1];
-    }
+    let dirName = dir.replace(/\//g, "");
 
     if (getCacheStatus() == "1" && cached[dirName] != undefined && refresh == 0) {
         modLocationContainer(cached[dirName]["list"], cached[dirName]["cd"], cached[dirName]["dir"]);
