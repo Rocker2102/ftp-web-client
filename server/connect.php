@@ -73,6 +73,10 @@
 
     $send->list = formList($ftp->getPwd());
     $send->pwd = setSessionVar("FTP_Cd", $ftp->getPwd());
+    $send->list = formList($ftp->getPwd());
+
+    $send->host = getSessionVar("FTP_Host");
+    $send->port = getSessionVar("FTP_Port");
 
     if (is_array($dirParsed) && count($dirParsed) > 1) {
         $send->dir = formArr($dirDetailed, $dirParsed);

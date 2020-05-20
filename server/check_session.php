@@ -18,6 +18,8 @@
 
     updateDirList($ftp, $send, $dir);
     $send->list = formList($ftp->getPwd());
+    $send->host = getSessionVar("FTP_Host");
+    $send->port = getSessionVar("FTP_Port");
 
     exitScript($send, 0, "Session restored!");
 ?>
