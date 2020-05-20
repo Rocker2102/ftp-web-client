@@ -8,6 +8,7 @@ $(document).ready(function() {
 });
 
 /* global variables */
+let serverdata = 0;
 let pwd = "";
 let cached = {};
 
@@ -70,6 +71,11 @@ function checkSession() {
                 modDiv("info-text", data.status, "success-alert", "", "loader danger-alert info-alert warning-alert");
                 modDiv(submitBtn, "Connected", "green", "verified_user", "red green orange");
                 modInputs("ftp-form", true);
+                if (typeof(Storage) !== undefined) {
+                    serverdata = 1;
+                    sessionStorage.setItem("host", data.host);
+                    sessionStorage.setItem("port", data.port);
+                }
                 modLocationContainer(data.list, data.pwd, data.dir);
             } else {
                 $("#" + submitBtn).attr("disabled", false);
@@ -118,6 +124,11 @@ $("#ftp-form").on("submit", function(e) {
                 modDiv("info-text", data.status, "success-alert", "", "loader danger-alert info-alert warning-alert");
                 modDiv(submitBtn, "Connected", "green", "verified_user", "red green orange");
                 modInputs("ftp-form", true);
+                if (typeof(Storage) !== undefined) {
+                    serverdata = 1;
+                    sessionStorage.setItem("host", data.host);
+                    sessionStorage.setItem("port", data.port);
+                }
                 modLocationContainer(data.list, data.pwd, data.dir);
             } else {
                 $("#" + submitBtn).attr("disabled", false);
@@ -139,6 +150,11 @@ $("#ftp-form").on("submit", function(e) {
 
 $("#disconnect-btn").click(function() {
     $(this).addClass("hide");
+    if (typeof(Storage) !== undefined) {
+        serverdata = 0;
+        sessionStorage.removeItem("host");
+        sessionStorage.removeItem("port");
+    }
     disconnectFtp();
 });
 
@@ -294,7 +310,8 @@ $("#collection-container").on("click", "ul > li > span.title", function() {
     let type = $(this).parent().attr("data-type");
 
     if (type == "file") {
-        showToast("Files cannot be opened!", "yellow black-text");
+        let tmp = "<span>Files can't be opened!</span><a href='javascript:void(0)' onclick='changeDir(\"" + dir + "\")' class='btn-flat toast-action' style='color: #b71c1c'>Open anyway</a>"
+        showToast(tmp, "grey darken-4");
         return;
     }
     
@@ -325,17 +342,19 @@ function modLocationContainer(list, cd, dir) {
         cached[dirName] = {"dir": dir, "list": list, "cd": cd};
     }
 
-    for (i = 0; i < list.length; i++) {
-        if (i == list.length - 1 && list.length > 1) {
-            extra = "selected disabled";
-        } else {
-            extra = "";
+    if (list != 0) {
+        for (i = 0; i < list.length; i++) {
+            if (i == list.length - 1 && list.length > 1) {
+                extra = "selected disabled";
+            } else {
+                extra = "";
+            }
+            options += "<option value='" + list[i].chdir + "' " + extra + ">" + list[i].name + "</option>";
         }
-        options += "<option value='" + list[i].chdir + "' " + extra + ">" + list[i].name + "</option>";
+    
+        $("#location-container").find("select").html(options);
+        $("select").formSelect();
     }
-
-    $("#location-container").find("select").html(options);
-    $("select").formSelect();
 }
 
 $("#location-container").find("select").on("change", function() {
@@ -348,7 +367,7 @@ function changeDir(dir, refresh = 0) {
 
     if (getCacheStatus() == "1" && cached[dirName] != undefined && refresh == 0) {
         modLocationContainer(cached[dirName]["list"], cached[dirName]["cd"], cached[dirName]["dir"]);
-        console.log("[CACHE] Loaded local copy of " + dirName);
+        console.log("[CACHE] Loaded local copy");
         return;
     }
 
@@ -484,7 +503,7 @@ function fileMod(sendData, submitBtn = "") {
                 if (sendData["op"] == "download") {
                     window.open(data.link, "_blank");
                 } else {
-                    listDir(data.dir);
+                    modLocationContainer(data.list, data.pwd, data.dir);
                 }
             } else {
                 showToast(data.info, "red white-text", "close");
