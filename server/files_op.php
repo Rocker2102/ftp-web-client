@@ -32,6 +32,7 @@
 
             if ($ftp->rootDir() && $ftp->rename($dir, $parentDir."/".$name)) {    
                 updateDirList($ftp, $send, $parentDir);
+                $send->list = formList($ftp->getPwd());
 
                 $send->status = "[SUCCESS] File/Directory (".$dir.") renamed successfully.";
                 exitScript($send, 0, "Renamed!");
@@ -74,6 +75,7 @@
 
             if ($ftp->delete($dir)) {
                 updateDirList($ftp, $send, $parentDir);
+                $send->list = formList($ftp->getPwd());
                 $send->status = "[SUCCESS] File/Directory at '".$dir."' deleted successfully.";
                 exitScript($send, 0, "File/Directory Deleted!");
             } else {
@@ -98,6 +100,7 @@
         } else {
             if ($ftp->makeDir($location)) {
                 updateDirList($ftp, $send, $data["dir"]);
+                $send->list = formList($ftp->getPwd());
                 $send->status = "[SUCCESS] Directory Name: ".$data["name"].", Location: ".$data["dir"];
                 exitScript($send, 0, "Directory '".$data["name"]."' successfully created");
             } else {
