@@ -9,6 +9,7 @@ $(document).ready(function() {
 
 /* global variables */
 let serverdata = 0;
+let serverResponse = {time: 0, request: 0};
 let pwd = "";
 let cached = {};
 let currDir = "";
@@ -102,65 +103,83 @@ function disconnectFtp() {
     )
 }
 
-function getIcon(name, type) {
+function getSubType(name, type) {
     let tmp = name.split(".");
     tmp = tmp[tmp.length - 1];
     tmp = tmp.toLowerCase();
+
+    let obj = {
+        subtype: null, icon: null
+    };
 
     let img = ["jpg", "jpeg", "png", "bmp", "svg", "tiff", "raw", "psd", "ico"];
     let vid = ["mp4", "mkv", "mpg", "mpeg", "mpeg4", "flv", "mov", "webm", "avi", "wmv"];
     let doc = ["doc", "docx", "xls", "xlsx", "ppt", "pptx", "txt", "log", ""];
     let audio = ["mp3", "ogg", "wav", "aac", "wma"];
     let archive = ["zip", "zipx", "tar", "gz", "rar", "bz2", "bz", "wim", "xz", "7z", "iso", "img"];
-    let code = ["c", "cs", "cpp", "h", "py", "jar", "jad", "java", "html", "php", "css", "js", "go", "dart", "bat"];
+    let code = ["c", "cs", "cpp", "h", "py", "jar", "jad", "java", "html", "php", "css", "js", "json", "go", "dart", "bat"];
     let system = ["dll", "sys", "crt", "swp", "out", "drv", "ink", "dat", "efi", "ini"];
     let systemFolder = ["$", "."];
     let hidden = [".", "$", "@", "_"];
-
-    let icon = "";
-    let image = "";
+    let image = false;
 
     if (type == "dir") {
+        obj.subtype = "dir";
         if (systemFolder.includes(name.substr(0, 1))) {
-            return "<i class='material-icons circle'>settings</i>";
+            obj.icon = "<i class='material-icons circle'>settings</i>";
         } else {
-            return "<i class='material-icons circle'>folder_open</i>";
+            obj.icon = "<i class='material-icons circle'>folder_open</i>";
         }
+        return obj;
     }
 
     if (hidden.includes(name.substr(0, 1))) {
-        icon =  "visibility_off";
+        obj.subtype = "hidden";
+        obj.icon =  "visibility_off";
     } else if (tmp == "pdf") {
-        icon = "picture_as_pdf";
+        obj.subtype = "doc";
+        obj.icon = "picture_as_pdf";
     } else if (tmp == "vcf" || tmp == "vcard") {
-        icon = "contacts";
+        obj.subtype = "doc";
+        obj.icon = "contacts";
     } else if (tmp == "apk") {
-        icon = "android";
+        obj.subtype = "sw";
+        obj.icon = "android";
     } else if (tmp == "asc") {
-        icon = "https"
+        obj.subtype = "doc";
+        obj.icon = "https"
     } else if (img.includes(tmp)) {
-        icon = "landscape";
+        obj.subtype = "img";
+        obj.icon = "landscape";
     } else if (vid.includes(tmp)) {
-        icon = "movie";
+        obj.subtype = "vid";
+        obj.icon = "movie";
     } else if (doc.includes(tmp)) {
-        icon = "insert_drive_file";
+        obj.subtype = "doc";
+        obj.icon = "insert_drive_file";
     } else if (audio.includes(tmp)) {
-        icon = "music_note";
+        obj.subtype = "music";
+        obj.icon = "music_note";
     } else if (archive.includes(tmp)) {
-        icon = "archive";
+        obj.subtype = "archive";
+        obj.icon = "archive";
     } else if (code.includes(tmp)) {
-        icon = "code";
+        obj.subtype = "code";
+        obj.icon = "code";
     } else if (system.includes(tmp)) {
-        image = "<img src='assets/img/icons/icon_systemFile.png' alt='icon' class='circle' />";
+        obj.subtype = "system";
+        image = true;
+        obj.icon = "<img src='assets/img/icons/icon_systemFile.png' alt='icon' class='circle' />";
     } else {
-        icon = "help";
+        obj.subtype = "other";
+        obj.icon = "help";
     }
 
-    if (icon == "") {
-        return image;
-    } else {
-        return "<i class='material-icons circle'>" + icon + "</i>";
+    if (!image) {
+        obj.icon = "<i class='material-icons circle'>" + obj.icon + "</i>";
     }
+    
+    return obj;
 }
 
 function formatSize(bytes) {
@@ -192,6 +211,9 @@ function listDir(arr) {
     let list1 = "<ul class='collection'>";
     let list2 = "<ul class='collection'>";
     let list3 = "<ul class='collection'>";
+    let hide = getListingArr();
+    let hiddenItems = 0;
+    let totalItems = arr.length;
 
     for (i = 0; i < arr.length; i++) {
         let listItems = "";
@@ -202,9 +224,15 @@ function listDir(arr) {
             arr[i].type = "file";
         }
 
-        let attr = " data-dir='" + arr[i].name + "' data-type='" + arr[i].type + "' data-size='" + arr[i].size + "' data-chdir='" + arr[i].chdir +  "' ";
-        listItems += "<li class='collection-item avatar directory' " + attr + ">";
-            listItems += getIcon(arr[i].name, arr[i].type);
+        let sub = getSubType(arr[i].name, arr[i].type);
+        let attr = " data-dir='" + arr[i].name + "' data-type='" + arr[i].type + "' data-size='" + arr[i].size + "' data-chdir='" + arr[i].chdir +  "' data-subtype='" + sub.subtype + "' ";
+        if (hide.includes(sub.subtype)) {
+            hiddenItems++;
+            listItems += "<li class='collection-item avatar directory hide' " + attr + ">";
+        } else {
+            listItems += "<li class='collection-item avatar directory' " + attr + ">";
+        }
+            listItems += sub.icon;
             listItems += "<span class='title dir-name'>" + arr[i].name + "</span>";
             listItems += "<p>Permissions: <b>" + arr[i].chmod + "</b>, &nbsp; Group: <b>" + arr[i].group + "</b>, &nbsp; User: <b>" + arr[i].user + "</b></p>";
             if (arr[i].type == "file") {
@@ -239,6 +267,8 @@ function listDir(arr) {
             }
         }
     }
+
+    $("#item-count").html("Total Items: <b>" + totalItems + "</b>, Hidden Items: <b>" + hiddenItems + "</b>, Visible Items: <b>" + (totalItems - hiddenItems) + "</b>");
 
     if (cols == 2) {
         list1 += "</ul>";
@@ -422,6 +452,16 @@ function getCacheStatus() {
 
 function getStatus(btn) {
     return $(btn).attr("data-status");
+}
+
+function getListingArr() {
+    let arr = [];
+    let el = $("#listing-options-modal").find(".listing-toggle[data-status='0']");
+    for(i = 0; i < el.length; i++) {
+        arr.push($(el[i]).attr("data-toggle"));
+    }
+
+    return arr;
 }
 
 function getCols() {

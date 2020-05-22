@@ -209,6 +209,7 @@ $(".listing-toggle").on("click", function() {
         $(this).removeClass("red").addClass("green");
         $(this).attr({"data-status": "1", "data-tooltip": "Enabled"});
     }
+    listDir(currDir);
 });
 
 $("input[name='view-type']").on("change", function() {

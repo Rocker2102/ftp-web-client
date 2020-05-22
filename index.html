@@ -154,27 +154,28 @@
                         </div>
                     </div>
                     <p>Click to toggle visibility</p>
+                    <p id="item-count"></p>
                     <div class="my-gap-5"></div>
                     <div class="row">
                         <div class="col s12">
-                            <button type="button" class="listing-toggle btn green waves-effect" data-status="1" data-position="bottom" data-tooltip="Enabled"><i class="material-icons left">visibility_off</i>Hidden Items</button>
-                            <button type="button" class="listing-toggle btn green waves-effect" data-status="1" data-position="bottom" data-tooltip="Enabled"><i class="material-icons left">settings</i>System Items</button>
+                            <button type="button" class="listing-toggle btn green waves-effect" data-status="1" data-position="bottom" data-tooltip="Enabled" data-toggle="hidden"><i class="material-icons left">visibility_off</i>Hidden Items</button>
+                            <button type="button" class="listing-toggle btn green waves-effect" data-status="1" data-position="bottom" data-tooltip="Enabled" data-toggle="system"><i class="material-icons left">settings</i>System Items</button>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col s12">
-                            <button type="button" class="listing-toggle btn green waves-effect" data-status="1" data-position="bottom" data-tooltip="Enabled"><i class="material-icons left">folder</i>Directories</button>
-                            <button type="button" class="listing-toggle btn green waves-effect" data-status="1" data-position="bottom" data-tooltip="Enabled"><i class="material-icons left">insert_drive_file</i>Files</button>
+                            <button type="button" class="listing-toggle btn green waves-effect" data-status="1" data-position="bottom" data-tooltip="Enabled" data-toggle="dir"><i class="material-icons left">folder</i>Directories</button>
+                            <button type="button" class="listing-toggle btn green waves-effect" data-status="1" data-position="bottom" data-tooltip="Enabled" data-toggle="other"><i class="material-icons left">help</i>Others</button>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col s12">
-                            <button type="button" class="listing-toggle btn green waves-effect" data-status="1" data-position="bottom" data-tooltip="Enabled"><i class="material-icons left">archive</i>Archives</button>
-                            <button type="button" class="listing-toggle btn green waves-effect" data-status="1" data-position="bottom" data-tooltip="Enabled"><i class="material-icons left">code</i>Codes</button>
-                            <button type="button" class="listing-toggle btn green waves-effect" data-status="1" data-position="bottom" data-tooltip="Enabled"><i class="material-icons left">picture_as_pdf</i>Documents</button>
-                            <button type="button" class="listing-toggle btn green waves-effect" data-status="1" data-position="bottom" data-tooltip="Enabled"><i class="material-icons left">landscape</i>Images</button>
-                            <button type="button" class="listing-toggle btn green waves-effect" data-status="1" data-position="bottom" data-tooltip="Enabled"><i class="material-icons left">music_note</i>Music</button>
-                            <button type="button" class="listing-toggle btn green waves-effect" data-status="1" data-position="bottom" data-tooltip="Enabled"><i class="material-icons left">movie</i>Videos</button>
+                            <button type="button" class="listing-toggle btn green waves-effect" data-status="1" data-position="bottom" data-tooltip="Enabled" data-toggle="archive"><i class="material-icons left">archive</i>Archives</button>
+                            <button type="button" class="listing-toggle btn green waves-effect" data-status="1" data-position="bottom" data-tooltip="Enabled" data-toggle="code"><i class="material-icons left">code</i>Codes</button>
+                            <button type="button" class="listing-toggle btn green waves-effect" data-status="1" data-position="bottom" data-tooltip="Enabled" data-toggle="doc"><i class="material-icons left">picture_as_pdf</i>Documents</button>
+                            <button type="button" class="listing-toggle btn green waves-effect" data-status="1" data-position="bottom" data-tooltip="Enabled" data-toggle="img"><i class="material-icons left">landscape</i>Images</button>
+                            <button type="button" class="listing-toggle btn green waves-effect" data-status="1" data-position="bottom" data-tooltip="Enabled" data-toggle="music"><i class="material-icons left">music_note</i>Music</button>
+                            <button type="button" class="listing-toggle btn green waves-effect" data-status="1" data-position="bottom" data-tooltip="Enabled" data-toggle="vid"><i class="material-icons left">movie</i>Videos</button>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -200,4 +201,5 @@
     <script src="assets/js/jquery-3.4.1.min.js"></script>
     <script src="assets/js/materialize.min.js"></script>
     <script src="assets/js/main.js"></script>
+    <script src="assets/js/events.js"></script>
 </html>
