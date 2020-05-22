@@ -580,6 +580,20 @@ $("#ftp-cache-btn").on("click", function() {
     }
 });
 
+$(".listing-toggle").on("click", function() {
+    if (getStatus($(this)) == "1") {
+        $(this).removeClass("green").addClass("red");
+        $(this).attr({"data-status": "0", "data-tooltip": "Disabled"});
+    } else {
+        $(this).removeClass("red").addClass("green");
+        $(this).attr({"data-status": "1", "data-tooltip": "Enabled"});
+    }
+});
+
 function getCacheStatus() {
     return $("#ftp-cache-btn").attr("cache-status");
+}
+
+function getStatus(btn) {
+    return $(btn).attr("data-status");
 }
