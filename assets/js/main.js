@@ -11,6 +11,7 @@ $(document).ready(function() {
 let serverdata = 0;
 let pwd = "";
 let cached = {};
+let currDir = "";
 
 function showToast(htmlData, classData = "red white-text", icon = "info"){
     let toastIcon = "<i class='material-icons left'>" + icon + "</i>";
@@ -161,7 +162,7 @@ $("#disconnect-btn").click(function() {
 function disconnectFtp() {
     $("#op-fab").parent().removeClass("scale-in").addClass("scale-out");
     $("#ftp-form-container").removeClass("hide");
-    $("#collection-container").html("");
+    $("#collection-container-1, #collection-container-2, #collection-container-3").html("");
     $("#location-container").addClass("hide");
     $("#info-container").attr("connection-status", "0");
     $("#ftp-form-submit-btn").attr("disabled", false);
@@ -270,16 +271,23 @@ function listDir(arr) {
         showToast("No files/directories to list!", "black white-text", "info");
     }
 
-    $("#collection-container").html("");
-    let ulContainer = "<ul class='collection'>";
-    let listItems = "";
+    currDir = arr;
+    cols = getCols();
+
+    $("#collection-container-1, #collection-container-2, #collection-container-3").html("");
+    let list1 = "<ul class='collection'>";
+    let list2 = "<ul class='collection'>";
+    let list3 = "<ul class='collection'>";
 
     for (i = 0; i < arr.length; i++) {
+        let listItems = "";
+
         if (arr[i].chmod.substring(0, 1) == "d") {
             arr[i].type = "dir";
         } else {
             arr[i].type = "file";
         }
+
         let attr = " data-dir='" + arr[i].name + "' data-type='" + arr[i].type + "' data-size='" + arr[i].size + "' data-chdir='" + arr[i].chdir +  "' ";
         listItems += "<li class='collection-item avatar directory' " + attr + ">";
             listItems += getIcon(arr[i].name, arr[i].type);
@@ -298,14 +306,51 @@ function listDir(arr) {
                 listItems += "<i class='material-icons delete-icon' data-op='delete'>delete</i>"
             listItems += "</a>";
         listItems += "</li>";
+
+        if (cols != 2 && cols != 3) {
+            list1 += listItems;
+        } else if (cols == 2) {
+            if ((i + 1) % 2 == 1) {
+                list1 += listItems;
+            } else {
+                list2 += listItems;
+            }
+        } else if (cols == 3) {
+            if ((i + 1) % 3 == 1) {
+                list1 += listItems;
+            } else if ((i + 1) % 3 == 2) {
+                list2 += listItems;
+            } else {
+                list3 += listItems;
+            }
+        }
     }
 
-    ulContainer += listItems;
-    ulContainer += "</ul>";
-    $("#collection-container").append(ulContainer);
+    if (cols == 2) {
+        list1 += "</ul>";
+        list2 += "</ul>";
+        $("#collection-container-3").addClass("hide");
+        $("#collection-container-1, #collection-container-2").removeClass("s4 s12 hide").addClass("s6");
+        $("#collection-container-1").append(list1);
+        $("#collection-container-2").append(list2);
+    } else if (cols == 3) {
+        list1 += "</ul>";
+        list2 += "</ul>";
+        list3 += "</ul>";
+        $("#collection-container-2, #collection-container-3").removeClass("hide");
+        $("#collection-container-1, #collection-container-2, #collection-container-3").removeClass("s6 s12").addClass("s4");
+        $("#collection-container-1").append(list1);
+        $("#collection-container-2").append(list2);
+        $("#collection-container-3").append(list3);
+    } else {
+        list1 += "</ul>";
+        $("#collection-container-2, #collection-container-3").addClass("hide");
+        $("#collection-container-1").removeClass("s4 s6").addClass("s12");
+        $("#collection-container-1").append(list1);
+    }
 }
 
-$("#collection-container").on("click", "ul > li > span.title", function() {
+$("#collection-container-1, #collection-container-2, #collection-container-3").on("click", "ul > li > span.title", function() {
     let dir = $(this).parent().attr("data-chdir");
     let type = $(this).parent().attr("data-type");
 
@@ -417,7 +462,7 @@ function removeOverlay() {
     $("#loader, #overlay").fadeOut();
 }
 
-$("#collection-container").on("click", "ul > li > a > i", function() {
+$("#collection-container-1, #collection-container-2, #collection-container-3").on("click", "ul > li > a > i", function() {
     let operation = $(this).attr("data-op");
     let chdir = $(this).parent().parent().attr("data-chdir");
     let type = $(this).parent().parent().attr("data-type");
@@ -596,4 +641,17 @@ function getCacheStatus() {
 
 function getStatus(btn) {
     return $(btn).attr("data-status");
+}
+
+$("input[name='view-type']").on("change", function() {
+    listDir(currDir);
+});
+
+function getCols() {
+    let elements = $("input[name='view-type']");
+    for(i = 0; i < elements.length; i++) {
+        if ($(elements[i]).prop("checked")) {
+            return Number($(elements[i]).val());
+        }
+    }
 }
