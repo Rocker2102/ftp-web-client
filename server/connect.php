@@ -1,5 +1,6 @@
 <?php
     $send = new stdClass;
+    $send->beginTime = microtime(true);
     $details = [];
 
     require "operations.php";

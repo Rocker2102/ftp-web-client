@@ -1,5 +1,6 @@
 <?php
     $send = new stdClass;
+    $send->beginTime = microtime(true);
     require "operations.php";
 
     if (getSessionVar("FTP_Status")) {

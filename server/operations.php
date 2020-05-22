@@ -238,6 +238,7 @@
     function exitScript(stdClass $jsonObj, $errorVal = 1, $info = "Script error!") {
         $jsonObj->error = $errorVal;
         $jsonObj->info = $info;
+        $jsonObj->endTime = microtime(true);
         echo json_encode($jsonObj);
         exit();
     }

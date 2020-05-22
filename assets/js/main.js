@@ -9,7 +9,7 @@ $(document).ready(function() {
 
 /* global variables */
 let serverdata = 0;
-let serverResponse = {time: 0, request: 0};
+let serverResponse = {time: 0, requests: 0};
 let pwd = "";
 let cached = {};
 let currDir = "";
@@ -58,6 +58,7 @@ function checkSession() {
         "server/check_session.php",
         function(data) {
             removeOverlay();
+            updateResponseTime(data.endTime, data.beginTime);
 
             if (data.error == 0) {
                 $("#op-fab").parent().removeClass("scale-out").addClass("scale-in");
@@ -83,6 +84,8 @@ function checkSession() {
 }
 
 function disconnectFtp() {
+    serverResponse.time = 0;
+    serverResponse.requests = 0;
     $("#op-fab").parent().removeClass("scale-in").addClass("scale-out");
     $("#ftp-form-container").removeClass("hide");
     $("#collection-container-1, #collection-container-2, #collection-container-3").html("");
@@ -269,6 +272,7 @@ function listDir(arr) {
     }
 
     $("#item-count").html("Total Items: <b>" + totalItems + "</b>, Hidden Items: <b>" + hiddenItems + "</b>, Visible Items: <b>" + (totalItems - hiddenItems) + "</b>");
+    $("#response-time").html("Average Server Response Time: <b>" + (serverResponse.time/serverResponse.requests).toFixed(2) + " seconds</b>");
 
     if (cols == 2) {
         list1 += "</ul>";
@@ -368,6 +372,8 @@ function dirChangeSuccess(receive) {
         showToast("Data Error!");
         return;
     }
+
+    updateResponseTime(data.endTime, data.beginTime)
     
     if (Number(data.error) == 0) {
         if (data.info != undefined && data.info != "") {
@@ -419,6 +425,7 @@ function fileMod(sendData, submitBtn = "") {
                 return;
             }
             $("#rename-modal, #new-folder-modal").modal("close");
+            updateResponseTime(data.endTime, data.beginTime)
 
             if (data.status != undefined) {
                 console.log(data.status);
@@ -471,4 +478,12 @@ function getCols() {
             return Number($(elements[i]).val());
         }
     }
+}
+
+function updateResponseTime(end, begin) {
+    let endTime = Number(end);
+    let beginTime = Number(begin);
+    
+    serverResponse.time += (endTime - beginTime);
+    serverResponse.requests++;
 }

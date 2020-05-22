@@ -28,6 +28,8 @@ $("#ftp-form").on("submit", function(e) {
                 showToast("Data Error!", "red white-text", "error_outline");
                 return;
             }
+            
+            updateResponseTime(data.endTime, data.beginTime)
 
             if (Number(data.error) == 0) {
                 $("#op-fab").parent().removeClass("scale-out").addClass("scale-in");
