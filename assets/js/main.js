@@ -455,7 +455,7 @@ $("#rename-form").on("submit", function(e) {
 });
 
 $("#new-name").on("input", function() {
-    if ($(this).val() == $(this).attr("old-val") || $(this).val() == "") {
+    if ($(this).val().toLowerCase() == $(this).attr("old-val").toLowerCase() || $(this).val() == "") {
         $("#rename-submit-btn").attr("disabled", true);
     } else {
         $("#rename-submit-btn").removeClass("disabled").attr("disabled", false);
