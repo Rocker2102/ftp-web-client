@@ -86,6 +86,7 @@ function checkSession() {
 function disconnectFtp() {
     serverResponse.time = 0;
     serverResponse.requests = 0;
+    cached = {};
     $("#op-fab").parent().removeClass("scale-in").addClass("scale-out");
     $("#ftp-form-container").removeClass("hide");
     $("#collection-container-1, #collection-container-2, #collection-container-3").html("");
