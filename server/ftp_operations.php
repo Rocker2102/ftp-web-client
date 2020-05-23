@@ -77,10 +77,10 @@
             }
         }
 
-        public function delete($dir) {
-            if ($this->connect && @ftp_delete($this->connect, $dir)) {
+        public function delete($path) {
+            if ($this->connect && @ftp_delete($this->connect, $path)) {
                 return true;
-            } else if ($this->connect && @ftp_rmdir($this->connect, $dir)) {
+            } else if ($this->connect && @ftp_rmdir($this->connect, $path)) {
                 return true;
             } else {
                 return false;
