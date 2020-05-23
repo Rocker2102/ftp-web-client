@@ -28,24 +28,6 @@ function modDiv(id, html, classAdd = "", icon = "", classRemove = "") {
     }
 }
 
-function customElement(tag, id = "", classList = "", attributeList = [], html = "", childList = "") {
-    let element = document.createElement(tag);
-    $(element).addClass(classList).html(html);
-
-    if (id != "" && id.length != 0) {
-        $(element).attr("id", id);
-    }
-
-    for (i = 0; i < attributeList.length; i++) {
-        $(element).attr(attributeList[i].name, attributeList[i].value);
-    }
-    for (i = 0; i < childList.length; i++) {
-        $(element).append(childList[i]);
-    }
-
-    return element;
-}
-
 function modInputs(id, status) {
     let elements = $("#" + id).find("input, select");
     $(elements).attr("disabled", status);
@@ -87,6 +69,8 @@ function disconnectFtp() {
     serverResponse.time = 0;
     serverResponse.requests = 0;
     cached = {};
+    pwd = "";
+    currDir = "";
     $("#op-fab").parent().removeClass("scale-in").addClass("scale-out");
     $("#ftp-form-container").removeClass("hide");
     $("#collection-container-1, #collection-container-2, #collection-container-3").html("");
