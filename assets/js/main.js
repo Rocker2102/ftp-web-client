@@ -145,7 +145,7 @@ function getSubType(name, type) {
     } else if (tmp == "vcf" || tmp == "vcard") {
         obj.subtype = "doc";
         obj.icon = "contacts";
-    } else if (tmp == "apk") {
+    } else if (tmp == "apk" || tmp == "exe") {
         obj.subtype = "sw";
         obj.icon = "android";
     } else if (tmp == "asc") {
@@ -209,6 +209,9 @@ function listDir(arr) {
 
     currDir = arr;
     cols = getCols();
+    let fileTypeCount = {
+        hidden: 0, system: 0, dir: 0, other: 0, archive: 0, code: 0, doc: 0, img: 0, music: 0, vid: 0, sw: 0
+    }
 
     $("#collection-container-1, #collection-container-2, #collection-container-3").html("");
     let list1 = "<ul class='collection'>";
@@ -229,6 +232,8 @@ function listDir(arr) {
 
         let sub = getSubType(arr[i].name, arr[i].type);
         let attr = " data-dir='" + arr[i].name + "' data-type='" + arr[i].type + "' data-size='" + arr[i].size + "' data-chdir='" + arr[i].chdir +  "' data-subtype='" + sub.subtype + "' ";
+        fileTypeCount[sub.subtype]++;
+
         if (hide.includes(sub.subtype)) {
             hiddenItems++;
             listItems += "<li class='collection-item avatar directory hide' " + attr + ">";
@@ -270,6 +275,8 @@ function listDir(arr) {
             }
         }
     }
+
+    updateFileTypeCount(fileTypeCount);
 
     $("#item-count").html("Total Items: <b>" + totalItems + "</b>, Hidden Items: <b>" + hiddenItems + "</b>, Visible Items: <b>" + (totalItems - hiddenItems) + "</b>");
     $("#response-time").html("Average Server Response Time: <b>" + (serverResponse.time/serverResponse.requests).toFixed(2) + " seconds</b>");
@@ -486,4 +493,12 @@ function updateResponseTime(end, begin) {
     
     serverResponse.time += (endTime - beginTime);
     serverResponse.requests++;
+}
+
+function updateFileTypeCount(obj) {
+    for (var key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            $("#" + key + "-count").html("(" + obj[key] + ")");
+        }
+    }
 }
