@@ -85,7 +85,7 @@ $("#collection-container-1, #collection-container-2, #collection-container-3").o
     let type = $(this).parent().attr("data-type");
 
     if (type == "file") {
-        let tmp = "<span>Files can't be opened!</span><a href='javascript:void(0)' onclick='changeDir(\"" + dir + "\")' class='btn-flat toast-action' style='color: #b71c1c'>Open anyway</a>"
+        let tmp = "<span>Files can't be opened!</span><a href='javascript:void(0)' onclick='changeDir(\"" + dir + "\")' class='btn-flat toast-action' style='color: #e53935'>Open anyway</a>"
         showToast(tmp, "grey darken-4");
         return;
     }
