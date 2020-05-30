@@ -160,11 +160,7 @@ main {
     bottom: 0 !important;
 }
 
-#rename-modal {
-    width: fit-content;
-}
-
-#new-folder-modal {
+#rename-modal, #new-folder-modal, #upload-file-modal {
     width: fit-content;
 }
 
