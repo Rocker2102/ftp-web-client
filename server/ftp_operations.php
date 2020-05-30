@@ -96,7 +96,7 @@
         }
 
         public function uploadFile($source, $dest, $mode = FTP_BINARY) {
-            if ($this->connect && ftp_put($this->connect, $dest, $source, $mode)) {
+            if ($this->connect && @ftp_put($this->connect, $dest, $source, $mode)) {
                 return true;
             } else {
                 return false;
