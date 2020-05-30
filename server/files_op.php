@@ -109,6 +109,23 @@
                 exitScript($send, 1, "Unable to create directory!");
             }
         }
+    } else if ($op == "new-file") {
+        if (!isset($_FILES["file"]) || !isset($_POST["dir"])) {
+            exitScript($send, 1, "Incomplete request!");
+        } else {
+            $dir = getModDir($_POST["dir"]);
+            $tmpName = $_FILES["file"]["tmp_name"];
+
+            if ($ftp->uploadFile($tmpName, $dir."/".$_FILES["file"]["name"])) {
+                updateDirList($ftp, $send, $dir);
+                $send->list = formList($ftp->getPwd());
+                $send->status = "[SUCCESS] File uploaded.";
+                exitScript($send, 0, "File uploaded!");
+            } else {
+                $send->status = "[FAIL] Unable to upload file!";
+                exitScript($send, 1, "Unable to upload file!");
+            }
+        }
     } else {
         exitScript($send, 1, "Bad Request!");
     }
