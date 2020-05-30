@@ -181,6 +181,7 @@ $("#upload-file-form").on("submit", function(e) {
     let submitBtn = "upload-file-submit-btn";
     let formdata = new FormData();
     formdata.append("op", "new-file");
+    formdata.append("dir", pwd);
     formdata.append("file", $("#new-file").prop("files")[0]);
 
     $.ajax({
@@ -192,10 +193,12 @@ $("#upload-file-form").on("submit", function(e) {
         contentType: false,
         processData: false,
         beforeSend: function() {
+            addOverlay();
             $("#" + submitBtn).attr("disabled", true);
             modDiv(submitBtn, "Uploading...", "", "loop", "orange green red");
         },
         success: function(receive) {
+            removeOverlay();
             $("#" + submitBtn).attr("disabled", false);
             modDiv(submitBtn, "Upload", "green", "publish", "orange red");
 
@@ -209,13 +212,16 @@ $("#upload-file-form").on("submit", function(e) {
             }
 
             if (data.error == 0) {
+                $("#upload-file-modal").modal("close");
                 showToast("File uploaded!", "green white-text", "done_all");
+                modLocationContainer(data.list, data.pwd, data.dir);
             } else {
                 showToast(data.info, "red white-text", "error_outline");
             }
             return;
         },
         error: function() {
+            removeOverlay();
             $("#" + submitBtn).attr("disabled", false);
             modDiv(submitBtn, "Upload", "green", "publish", "orange red");
             showToast("Server Error!", "red white-text", "close");
