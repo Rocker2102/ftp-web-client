@@ -95,6 +95,14 @@
             }
         }
 
+        public function uploadFile($source, $dest, $mode = FTP_BINARY) {
+            if ($this->connect && ftp_put($this->connect, $dest, $source, $mode)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
         function __destruct() {
             if ($this->connect) {
                 ftp_close($this->connect);
