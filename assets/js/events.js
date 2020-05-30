@@ -147,7 +147,8 @@ $(".dir-op").click(function() {
     let op = $(this).attr("data-op");
 
     if (op == "upload-file") {
-        showToast("Under Development", "yellow black-text", "gavel");
+        $("#new-file-location").html("Location: " + pwd);
+        $("#upload-file-modal").modal("open");
     } else if (op == "new-folder") {
         $("#new-folder-location").html("Location: " + pwd);
         $("#new-folder-modal").modal("open");
@@ -172,6 +173,54 @@ $("#new-folder").on("input", function() {
 
     $("#new-folder-modal-heading").html("Create Folder: " + val);
     $(this).val(val);
+});
+
+$("#upload-file-form").on("submit", function(e) {
+    e.preventDefault();
+
+    let submitBtn = "upload-file-submit-btn";
+    let formdata = new FormData();
+    formdata.append("op", "new-file");
+    formdata.append("file", $("#new-file").prop("files")[0]);
+
+    $.ajax({
+        url: "server/files_op.php",
+        type: "POST",
+        data: formdata,
+        enctype: 'multipart/form-data',
+        cache: false,
+        contentType: false,
+        processData: false,
+        beforeSend: function() {
+            $("#" + submitBtn).attr("disabled", true);
+            modDiv(submitBtn, "Uploading...", "", "loop", "orange green red");
+        },
+        success: function(receive) {
+            $("#" + submitBtn).attr("disabled", false);
+            modDiv(submitBtn, "Upload", "green", "publish", "orange red");
+
+            var data;
+
+            try {
+                data = JSON.parse(receive);
+            } catch (e) {
+                showToast("Data Error!");
+                return;
+            }
+
+            if (data.error == 0) {
+                showToast("File uploaded!", "green white-text", "done_all");
+            } else {
+                showToast(data.info, "red white-text", "error_outline");
+            }
+            return;
+        },
+        error: function() {
+            $("#" + submitBtn).attr("disabled", false);
+            modDiv(submitBtn, "Upload", "green", "publish", "orange red");
+            showToast("Server Error!", "red white-text", "close");
+        }
+    });
 });
 
 $("#new-folder-form").on("submit", function(e) {
