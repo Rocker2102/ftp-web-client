@@ -34,7 +34,7 @@
         }
 
         public function rootDir() {
-            if($this->connect && @ftp_cdup($this->connect)) {
+            if ($this->connect && @ftp_cdup($this->connect)) {
                 return true;
             } else {
                 return false;
